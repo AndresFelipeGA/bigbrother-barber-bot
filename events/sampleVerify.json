@@ -1,0 +1,8 @@
+{
+  "httpMethod": "GET",
+  "queryStringParameters": {
+    "hub.mode": "subscribe",
+    "hub.verify_token": "your_custom_verify_token_here",
+    "hub.challenge": "1234567890"
+  }
+}

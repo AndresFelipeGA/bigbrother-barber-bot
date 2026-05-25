@@ -1,0 +1,7 @@
+{
+  "httpMethod": "POST",
+  "headers": {
+    "Content-Type": "application/json"
+  },
+  "body": "{\"object\":\"whatsapp_business_account\",\"entry\":[{\"id\":\"123456789\",\"changes\":[{\"value\":{\"messaging_product\":\"whatsapp\",\"metadata\":{\"display_phone_number\":\"573001234567\",\"phone_number_id\":\"123456789\"},\"contacts\":[{\"profile\":{\"name\":\"Juan Pérez\"},\"wa_id\":\"573009876543\"}],\"messages\":[{\"from\":\"573009876543\",\"id\":\"wamid.test123\",\"timestamp\":\"1234567890\",\"text\":{\"body\":\"Hola\"},\"type\":\"text\"}]},\"field\":\"messages\"}]}]}"
+}

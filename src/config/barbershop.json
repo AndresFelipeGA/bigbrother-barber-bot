@@ -1,0 +1,37 @@
+{
+  "name": "Big Brother Barber Shop",
+  "emoji": "💈",
+  "slogan": "Tu estilo, nuestra pasión",
+  "location": {
+    "address": "Bogotá, Colombia",
+    "googleMapsUrl": "https://maps.app.goo.gl/GvSGEfbtpDNz3mmE7",
+    "latitude": 4.6097,
+    "longitude": -74.0817
+  },
+  "schedule": {
+    "Lunes": "9:00 AM - 8:00 PM",
+    "Martes": "9:00 AM - 8:00 PM",
+    "Miércoles": "9:00 AM - 8:00 PM",
+    "Jueves": "9:00 AM - 8:00 PM",
+    "Viernes": "9:00 AM - 8:00 PM",
+    "Sábado": "9:00 AM - 6:00 PM",
+    "Domingo": "Cerrado"
+  },
+  "services": [
+    { "name": "Corte de cabello", "price": 15000, "emoji": "✂️", "duration": 30 },
+    { "name": "Arreglo de barba", "price": 10000, "emoji": "🧔", "duration": 20 },
+    { "name": "Corte + Barba", "price": 22000, "emoji": "✂️🧔", "duration": 45 },
+    { "name": "Afeitado clásico", "price": 12000, "emoji": "🪒", "duration": 25 },
+    { "name": "Tratamiento capilar", "price": 25000, "emoji": "💆", "duration": 40 }
+  ],
+  "currency": "COP",
+  "currencySymbol": "$",
+  "barbers": [
+    { "name": "Disponible", "id": "barber1" }
+  ],
+  "socialMedia": {
+    "instagram": "",
+    "facebook": "",
+    "tiktok": ""
+  }
+}
