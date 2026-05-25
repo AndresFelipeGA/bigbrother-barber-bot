@@ -1,31 +1,31 @@
 'use strict';
 
-const { processMessage } = require('../services/chatbot');
+const { processMessage } = require('../src/services/chatbot');
 
 /**
- * Lambda handler for WhatsApp webhook.
+ * Vercel Serverless Function - WhatsApp Webhook
  * Handles both GET (verification) and POST (incoming messages).
+ * 
+ * URL: https://your-project.vercel.app/webhook
  */
-exports.handler = async (event) => {
-  console.log('Event received:', JSON.stringify(event, null, 2));
-
-  const method = event.httpMethod || event.requestContext?.http?.method;
+module.exports = async function handler(req, res) {
+  console.log(`[Webhook] ${req.method} request received`);
 
   try {
     // ---- GET: Webhook Verification ----
-    if (method === 'GET') {
-      return handleVerification(event);
+    if (req.method === 'GET') {
+      return handleVerification(req, res);
     }
 
     // ---- POST: Incoming Message ----
-    if (method === 'POST') {
-      return await handleIncomingMessage(event);
+    if (req.method === 'POST') {
+      return await handleIncomingMessage(req, res);
     }
 
-    return response(405, { error: 'Method not allowed' });
+    return res.status(405).json({ error: 'Method not allowed' });
   } catch (error) {
     console.error('Webhook handler error:', error);
-    return response(500, { error: 'Internal server error' });
+    return res.status(500).json({ error: 'Internal server error' });
   }
 };
 
@@ -33,33 +33,28 @@ exports.handler = async (event) => {
  * Handles the GET verification challenge from Meta.
  * Meta sends: hub.mode, hub.verify_token, hub.challenge
  */
-function handleVerification(event) {
-  const params = event.queryStringParameters || {};
-  const mode = params['hub.mode'];
-  const token = params['hub.verify_token'];
-  const challenge = params['hub.challenge'];
+function handleVerification(req, res) {
+  const mode = req.query['hub.mode'];
+  const token = req.query['hub.verify_token'];
+  const challenge = req.query['hub.challenge'];
 
   const VERIFY_TOKEN = process.env.VERIFY_TOKEN;
 
   if (mode === 'subscribe' && token === VERIFY_TOKEN) {
     console.log('Webhook verified successfully');
-    return {
-      statusCode: 200,
-      headers: { 'Content-Type': 'text/plain' },
-      body: challenge,
-    };
+    return res.status(200).send(challenge);
   }
 
   console.warn('Webhook verification failed. Token mismatch.');
-  return response(403, { error: 'Verification failed' });
+  return res.status(403).json({ error: 'Verification failed' });
 }
 
 /**
  * Handles incoming POST messages from WhatsApp Cloud API.
  * Extracts the message and passes it to the chatbot service.
  */
-async function handleIncomingMessage(event) {
-  const body = JSON.parse(event.body || '{}');
+async function handleIncomingMessage(req, res) {
+  const body = req.body || {};
 
   // Meta always sends this structure
   const entry = body.entry?.[0];
@@ -69,7 +64,7 @@ async function handleIncomingMessage(event) {
   // Only process messages (not status updates)
   if (!value?.messages || value.messages.length === 0) {
     console.log('No messages in payload (likely a status update). Ignoring.');
-    return response(200, { status: 'ok' });
+    return res.status(200).json({ status: 'ok' });
   }
 
   const message = value.messages[0];
@@ -103,19 +98,5 @@ async function handleIncomingMessage(event) {
   });
 
   // Always return 200 to Meta (they retry on errors)
-  return response(200, { status: 'ok' });
-}
-
-/**
- * Helper to build API Gateway response.
- */
-function response(statusCode, body) {
-  return {
-    statusCode,
-    headers: {
-      'Content-Type': 'application/json',
-      'Access-Control-Allow-Origin': '*',
-    },
-    body: JSON.stringify(body),
-  };
+  return res.status(200).json({ status: 'ok' });
 }

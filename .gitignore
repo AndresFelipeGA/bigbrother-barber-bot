@@ -4,9 +4,8 @@ node_modules/
 # Environment variables
 .env
 
-# AWS SAM
-.aws-sam/
-samconfig.toml
+# Vercel
+.vercel/
 
 # IDE
 .vscode/

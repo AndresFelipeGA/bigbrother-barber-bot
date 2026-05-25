@@ -1,28 +1,58 @@
 'use strict';
 
-const { DynamoDBClient } = require('@aws-sdk/client-dynamodb');
-const { DynamoDBDocumentClient, PutCommand, QueryCommand } = require('@aws-sdk/lib-dynamodb');
+const { MongoClient } = require('mongodb');
 const { v4: uuidv4 } = require('uuid');
 
-// Initialize DynamoDB client
-const client = new DynamoDBClient({});
-const docClient = DynamoDBDocumentClient.from(client);
+/**
+ * MongoDB Atlas connection.
+ * Uses connection pooling - the client is reused across invocations
+ * in Vercel serverless functions (warm starts).
+ * 
+ * MongoDB Atlas M0 (Free Tier):
+ * - 512MB storage (FREE FOREVER)
+ * - Shared cluster
+ * - Perfect for a barbershop
+ */
+let cachedClient = null;
+let cachedDb = null;
 
-const TABLE_NAME = process.env.APPOINTMENTS_TABLE || 'BigBrotherAppointments';
+const DB_NAME = 'bigbrother_barber';
+const COLLECTION_NAME = 'appointments';
 
 /**
- * Saves a new appointment to DynamoDB.
+ * Connects to MongoDB Atlas (or returns cached connection).
+ */
+async function getDatabase() {
+  if (cachedClient && cachedDb) {
+    return cachedDb;
+  }
+
+  const uri = process.env.MONGODB_URI;
+  if (!uri) {
+    throw new Error('MONGODB_URI environment variable is not set');
+  }
+
+  const client = new MongoClient(uri);
+  await client.connect();
+
+  cachedClient = client;
+  cachedDb = client.db(DB_NAME);
+
+  console.log('Connected to MongoDB Atlas');
+  return cachedDb;
+}
+
+/**
+ * Saves a new appointment to MongoDB.
  * @param {object} appointment - { customerPhone, customerName, service, servicePrice, date, time, status }
- * @returns {object} The saved appointment item
+ * @returns {object} The saved appointment document
  */
 async function saveAppointment(appointment) {
-  const timestamp = new Date().toISOString();
-  const id = uuidv4();
+  const db = await getDatabase();
+  const collection = db.collection(COLLECTION_NAME);
 
-  const item = {
-    PK: `PHONE#${appointment.customerPhone}`,
-    SK: `APPT#${timestamp}#${id}`,
-    appointmentId: id,
+  const doc = {
+    _id: uuidv4(),
     customerPhone: appointment.customerPhone,
     customerName: appointment.customerName,
     service: appointment.service,
@@ -30,17 +60,12 @@ async function saveAppointment(appointment) {
     date: appointment.date,
     time: appointment.time,
     status: appointment.status || 'confirmed',
-    createdAt: timestamp,
+    createdAt: new Date().toISOString(),
   };
 
-  const command = new PutCommand({
-    TableName: TABLE_NAME,
-    Item: item,
-  });
-
-  await docClient.send(command);
-  console.log('Appointment saved:', JSON.stringify(item));
-  return item;
+  await collection.insertOne(doc);
+  console.log('Appointment saved:', JSON.stringify(doc));
+  return doc;
 }
 
 /**
@@ -49,21 +74,36 @@ async function saveAppointment(appointment) {
  * @returns {Array} List of appointments
  */
 async function getAppointmentsByPhone(phone) {
-  const command = new QueryCommand({
-    TableName: TABLE_NAME,
-    KeyConditionExpression: 'PK = :pk AND begins_with(SK, :sk)',
-    ExpressionAttributeValues: {
-      ':pk': `PHONE#${phone}`,
-      ':sk': 'APPT#',
-    },
-    ScanIndexForward: false, // Most recent first
-  });
+  const db = await getDatabase();
+  const collection = db.collection(COLLECTION_NAME);
 
-  const result = await docClient.send(command);
-  return result.Items || [];
+  const appointments = await collection
+    .find({ customerPhone: phone })
+    .sort({ createdAt: -1 })
+    .toArray();
+
+  return appointments;
+}
+
+/**
+ * Gets all appointments for a specific date.
+ * @param {string} date - Date string (DD/MM/YYYY)
+ * @returns {Array} List of appointments for that date
+ */
+async function getAppointmentsByDate(date) {
+  const db = await getDatabase();
+  const collection = db.collection(COLLECTION_NAME);
+
+  const appointments = await collection
+    .find({ date, status: 'confirmed' })
+    .sort({ time: 1 })
+    .toArray();
+
+  return appointments;
 }
 
 module.exports = {
   saveAppointment,
   getAppointmentsByPhone,
+  getAppointmentsByDate,
 };

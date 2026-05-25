@@ -1,10 +1,14 @@
 # 💈 Big Brother Barber Shop - WhatsApp Chatbot
 
-Chatbot de WhatsApp para **Big Brother Barber Shop** usando la **Meta WhatsApp Business Cloud API** (oficial) y **AWS Free Tier**.
+Chatbot de WhatsApp para **Big Brother Barber Shop** usando **Meta WhatsApp Business Cloud API** + **Vercel** (serverless) + **MongoDB Atlas** (base de datos).
+
+**Todo 100% gratis para siempre.** ✅
+
+---
 
 ## 🤖 ¿Qué hace el bot?
 
-Cuando un cliente escribe al WhatsApp de la barbería, el bot responde automáticamente con:
+Cuando un cliente escribe al WhatsApp de la barbería, el bot responde automáticamente:
 
 | Opción | Función |
 |--------|---------|
@@ -16,24 +20,34 @@ Cuando un cliente escribe al WhatsApp de la barbería, el bot responde automáti
 
 También detecta palabras clave como "hola", "precios", "ubicación", "cita", etc.
 
-## 💰 Costo: $0/mes
+---
 
-| Servicio | Free Tier | Uso Estimado |
-|----------|-----------|-------------|
-| AWS Lambda | 1M requests/mes | ~1,000/mes |
-| API Gateway | 1M calls/mes (12 meses) | ~1,000/mes |
-| DynamoDB | 25GB permanente | ~100 citas/mes |
-| WhatsApp API | 1,000 conv. servicio/mes | ~200-500/mes |
+## 💰 Costo: $0/mes — GRATIS PARA SIEMPRE
 
-> Las conversaciones de **servicio** (cuando el cliente te escribe primero) son **GRATIS**. Solo pagas si TÚ inicias conversaciones de marketing.
+| Servicio | Free Tier | Límite | ¿Expira? |
+|----------|-----------|--------|----------|
+| **Vercel** | Serverless Functions | 100GB bandwidth/mes | ❌ Gratis siempre |
+| **MongoDB Atlas** | M0 Cluster | 512MB storage | ❌ Gratis siempre |
+| **WhatsApp Cloud API** | Conversaciones de servicio | 1,000/mes | ❌ Gratis siempre |
+| **GitHub** | Repositorio | Ilimitado | ❌ Gratis siempre |
+
+> 💡 Las conversaciones de **servicio** (cuando el cliente te escribe primero y tú respondes) son **GRATIS**. Solo pagarías si TÚ inicias conversaciones de marketing, lo cual este bot NO hace.
+
+---
 
 ## 🏗️ Arquitectura
 
 ```
-Cliente WhatsApp → Meta Cloud API → API Gateway → Lambda → Responde via WhatsApp API
-                                                      ↓
-                                                  DynamoDB (citas)
+Cliente WhatsApp → Meta Cloud API → Vercel (serverless function) → Responde via WhatsApp API
+                                              ↓
+                                     MongoDB Atlas (citas)
 ```
+
+- **Sin servidores** que mantener
+- **Deploy automático** con `git push`
+- **Escala automáticamente**
+
+---
 
 ## 📁 Estructura del Proyecto
 
@@ -41,84 +55,76 @@ Cliente WhatsApp → Meta Cloud API → API Gateway → Lambda → Responde via 
 bigbrother-barber-bot/
 ├── README.md
 ├── package.json
+├── vercel.json                    # Configuración de Vercel
 ├── .env.example
 ├── .gitignore
-├── template.yaml              # SAM/CloudFormation (infraestructura)
+├── api/
+│   └── webhook.js                 # Serverless function (endpoint del webhook)
 ├── src/
-│   ├── handlers/
-│   │   └── webhook.js         # Lambda: recibe webhooks de Meta
 │   ├── services/
-│   │   ├── whatsapp.js        # Envía mensajes via WhatsApp Cloud API
-│   │   ├── chatbot.js         # Lógica del chatbot (intenciones, respuestas)
-│   │   └── appointments.js    # Gestión de citas en DynamoDB
+│   │   ├── whatsapp.js            # Envía respuestas via WhatsApp Cloud API
+│   │   ├── chatbot.js             # Lógica del chatbot (intenciones, respuestas)
+│   │   └── appointments.js        # Gestión de citas en MongoDB Atlas
 │   ├── config/
-│   │   └── barbershop.json    # Datos de la barbería (editable)
+│   │   └── barbershop.json        # Datos de la barbería (editable)
 │   └── utils/
-│       └── helpers.js         # Funciones auxiliares
+│       └── helpers.js             # Funciones auxiliares
 ├── events/
-│   ├── sampleMessage.json     # Evento de prueba (mensaje)
-│   └── sampleVerify.json      # Evento de prueba (verificación)
+│   ├── sampleMessage.json         # Evento de prueba (mensaje)
+│   └── sampleVerify.json          # Evento de prueba (verificación)
 └── tests/
-    └── chatbot.test.js        # Tests de detección de intenciones
+    └── chatbot.test.js            # Tests de detección de intenciones
 ```
 
 ---
 
 ## 🚀 Guía de Setup Paso a Paso
 
-### Paso 1: Instalar Herramientas Necesarias
+### Paso 1: Requisitos Previos
 
-#### 1.1 Node.js
-Descarga e instala Node.js 20+ desde: https://nodejs.org/
+Necesitas tener instalado:
+- **Node.js 20+**: https://nodejs.org
+- **Git**: https://git-scm.com
 
-Verifica la instalación:
+Verifica:
 ```bash
-node --version   # Debe ser v20+
+node --version   # v20+
 npm --version
-```
-
-#### 1.2 AWS CLI
-Descarga e instala desde: https://aws.amazon.com/cli/
-
-```bash
-aws --version
-```
-
-#### 1.3 AWS SAM CLI
-Descarga e instala desde: https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/install-sam-cli.html
-
-```bash
-sam --version
-```
-
-#### 1.4 Git
-Ya lo tienes instalado. Verifica con:
-```bash
 git --version
 ```
 
 ---
 
-### Paso 2: Crear Cuenta AWS Free Tier
+### Paso 2: Crear Cuenta en MongoDB Atlas (Base de Datos Gratis)
 
-1. Ve a https://aws.amazon.com/free
-2. Click en **"Crear una cuenta gratuita"**
-3. Necesitarás:
-   - Email
-   - Tarjeta de crédito/débito (NO te cobran, es solo verificación)
-   - Número de teléfono
-4. Selecciona el plan **"Basic Support - Free"**
-5. Una vez creada, configura AWS CLI:
+1. Ve a https://www.mongodb.com/cloud/atlas/register
+2. Crea una cuenta (puedes usar Google)
+3. Selecciona **M0 FREE** (el plan gratuito)
+4. Elige la región más cercana (ej: `us-east-1` o `sa-east-1` para Sudamérica)
+5. Click en **"Create Deployment"**
 
-```bash
-aws configure
-```
+#### 2.1 Crear Usuario de Base de Datos
+1. En el panel de Atlas, ve a **Database Access** → **Add New Database User**
+2. Método: **Password**
+3. Username: `barberbot`
+4. Password: genera una segura y **guárdala**
+5. Role: **Read and write to any database**
+6. Click **"Add User"**
 
-Te pedirá:
-- **AWS Access Key ID**: Lo obtienes en AWS Console → IAM → Users → Security Credentials
-- **AWS Secret Access Key**: Se muestra una sola vez al crear la key
-- **Default region**: `us-east-1` (o la que prefieras)
-- **Default output format**: `json`
+#### 2.2 Configurar Acceso de Red
+1. Ve a **Network Access** → **Add IP Address**
+2. Click en **"Allow Access from Anywhere"** (0.0.0.0/0)
+   - Esto es necesario para que Vercel pueda conectarse
+3. Click **"Confirm"**
+
+#### 2.3 Obtener Connection String
+1. Ve a **Database** → **Connect** → **Drivers**
+2. Copia el connection string. Se ve así:
+   ```
+   mongodb+srv://barberbot:<password>@cluster0.xxxxx.mongodb.net/?retryWrites=true&w=majority
+   ```
+3. Reemplaza `<password>` con la contraseña que creaste
+4. **Guarda este string**, lo necesitarás después
 
 ---
 
@@ -133,97 +139,73 @@ Te pedirá:
 2. Click en **"Crear app"**
 3. Selecciona **"Otro"** → **"Empresa"**
 4. Nombre: `Big Brother Barber Bot`
-5. En el dashboard de la app, busca **"WhatsApp"** y click en **"Configurar"**
+5. En el dashboard, busca **"WhatsApp"** y click en **"Configurar"**
 
 #### 3.3 Obtener Credenciales
 En la sección de WhatsApp de tu app:
 
-1. **Phone Number ID**: Lo ves en WhatsApp → API Setup → Phone Number ID
-2. **Temporary Token**: Click en "Generate" (dura 24h, luego necesitas uno permanente)
-3. **Verify Token**: Este lo inventas tú (ejemplo: `mi_token_secreto_123`)
+1. **Phone Number ID**: WhatsApp → API Setup → Phone Number ID
+2. **Temporary Token**: Click en "Generate" (dura 24h)
+3. **Verify Token**: Invéntalo tú (ejemplo: `mi_token_secreto_barberia_123`)
 
-#### 3.4 Obtener Token Permanente
-1. Ve a https://developers.facebook.com → Tu App → Settings → Basic
-2. Copia el **App ID** y **App Secret**
-3. Ve a Business Settings → System Users → Add
-4. Crea un System User con rol **Admin**
-5. Asigna la app al System User
-6. Genera un token con permisos: `whatsapp_business_management`, `whatsapp_business_messaging`
-
-> ⚠️ Para desarrollo/pruebas, el token temporal funciona bien. El permanente es para producción.
-
-#### 3.5 Agregar Número de Teléfono
-- Meta te da un **número de prueba gratuito** para desarrollo
-- Para producción, necesitas agregar tu propio número de WhatsApp Business
-- El número NO puede estar registrado en WhatsApp personal
+> 💡 Para desarrollo, el token temporal funciona. Para producción, necesitas un token permanente (ver sección de FAQ).
 
 ---
 
-### Paso 4: Clonar y Configurar el Proyecto
+### Paso 4: Crear Cuenta en Vercel (Hosting Gratis)
+
+1. Ve a https://vercel.com/signup
+2. Regístrate con tu cuenta de **GitHub** (la más fácil)
+3. Autoriza el acceso a tus repositorios
+
+---
+
+### Paso 5: Clonar y Configurar el Proyecto
 
 ```bash
 # Clonar el repositorio
-git clone https://github.com/TU_USUARIO/bigbrother-barber-bot.git
+git clone https://github.com/AndresFelipeGA/bigbrother-barber-bot.git
 cd bigbrother-barber-bot
 
 # Instalar dependencias
 npm install
-
-# Copiar archivo de configuración
-cp .env.example .env
 ```
-
-Edita el archivo `.env` con tus credenciales:
-```env
-WHATSAPP_TOKEN=tu_token_de_whatsapp
-WHATSAPP_PHONE_NUMBER_ID=tu_phone_number_id
-VERIFY_TOKEN=tu_token_de_verificacion_personalizado
-OWNER_PHONE=573001234567
-```
-
-#### 4.1 Personalizar Datos de la Barbería
-Edita `src/config/barbershop.json` con los datos reales:
-- Nombre, dirección, horarios
-- Servicios y precios
-- Link de Google Maps
-- Coordenadas de ubicación
 
 ---
 
-### Paso 5: Ejecutar Tests
+### Paso 6: Desplegar en Vercel
 
+#### Opción A: Desde la Web (más fácil)
+1. Ve a https://vercel.com/new
+2. Importa el repositorio `bigbrother-barber-bot`
+3. En **Environment Variables**, agrega:
+   - `WHATSAPP_TOKEN` = tu token de WhatsApp
+   - `WHATSAPP_PHONE_NUMBER_ID` = tu Phone Number ID
+   - `VERIFY_TOKEN` = tu token de verificación personalizado
+   - `MONGODB_URI` = tu connection string de MongoDB Atlas
+   - `OWNER_PHONE` = tu número de teléfono (ej: 573001234567)
+4. Click en **"Deploy"**
+
+#### Opción B: Desde la Terminal
 ```bash
-npm test
+# Instalar Vercel CLI
+npm i -g vercel
+
+# Login
+vercel login
+
+# Deploy
+vercel --prod
 ```
 
-Deberías ver todos los tests pasando ✅
-
----
-
-### Paso 6: Desplegar en AWS
-
-```bash
-# Construir el proyecto
-sam build
-
-# Desplegar (primera vez, modo guiado)
-sam deploy --guided
+Al finalizar, obtendrás una URL como:
+```
+https://bigbrother-barber-bot.vercel.app
 ```
 
-Durante el deploy guiado te preguntará:
-- **Stack Name**: `bigbrother-barber-bot`
-- **AWS Region**: `us-east-1`
-- **WhatsAppToken**: Tu token de WhatsApp
-- **WhatsAppPhoneNumberId**: Tu Phone Number ID
-- **VerifyToken**: Tu token de verificación personalizado
-- **OwnerPhone**: Tu número de teléfono (ej: 573001234567)
-- **Confirm changes before deploy**: `y`
-- **Allow SAM CLI IAM role creation**: `y`
-- **Save arguments to configuration file**: `y`
-
-Al finalizar, verás la **Webhook URL** en los outputs:
+Tu webhook URL será:
 ```
-https://xxxxxxxx.execute-api.us-east-1.amazonaws.com/prod/webhook
+https://bigbrother-barber-bot.vercel.app/webhook
 ```
 
 ---
@@ -232,10 +214,10 @@ https://xxxxxxxx.execute-api.us-east-1.amazonaws.com/prod/webhook
 
 1. Ve a https://developers.facebook.com → Tu App → WhatsApp → Configuration
 2. En **Webhook**:
-   - **Callback URL**: Pega la URL del paso anterior
-   - **Verify Token**: El mismo que pusiste en `.env`
+   - **Callback URL**: `https://bigbrother-barber-bot.vercel.app/webhook`
+   - **Verify Token**: El mismo que pusiste en las variables de entorno
 3. Click en **"Verify and Save"**
-4. En **Webhook Fields**, suscríbete a: `messages`
+4. En **Webhook Fields**, suscríbete a: **`messages`**
 
 ---
 
@@ -247,58 +229,73 @@ https://xxxxxxxx.execute-api.us-east-1.amazonaws.com/prod/webhook
 
 ---
 
-## 🔧 Comandos Útiles
-
-```bash
-# Ver logs en tiempo real
-sam logs -n BigBrother-WhatsApp-Webhook --stack-name bigbrother-barber-bot --tail
-
-# Invocar Lambda localmente (requiere Docker)
-sam local invoke WebhookFunction -e events/sampleMessage.json
-
-# Actualizar después de cambios
-sam build && sam deploy
-
-# Eliminar todo el stack
-sam delete --stack-name bigbrother-barber-bot
-```
-
----
-
 ## 📝 Personalización
 
 ### Cambiar datos de la barbería
-Edita [`src/config/barbershop.json`](src/config/barbershop.json):
+Edita `src/config/barbershop.json`:
 - Nombre, slogan
 - Horarios por día
 - Servicios con precios y emojis
 - Dirección y coordenadas GPS
 - Link de Google Maps
 
-### Agregar nuevas intenciones
-Edita [`src/services/chatbot.js`](src/services/chatbot.js):
+Después de editar, haz commit y push:
+```bash
+git add -A && git commit -m "update barbershop info" && git push
+```
+Vercel desplegará automáticamente los cambios.
+
+### Agregar nuevas intenciones al chatbot
+Edita `src/services/chatbot.js`:
 1. Agrega keywords en el objeto `intents` dentro de `detectIntent()`
 2. Crea una nueva función de respuesta
 3. Agrega el case en el switch de `processMessage()`
 
 ---
 
+## 🔧 Comandos Útiles
+
+```bash
+# Correr tests
+npm test
+
+# Desarrollo local (requiere Vercel CLI)
+vercel dev
+
+# Deploy a producción
+vercel --prod
+
+# Ver logs
+vercel logs https://bigbrother-barber-bot.vercel.app
+```
+
+---
+
 ## ❓ Preguntas Frecuentes
 
-**¿Es realmente gratis?**
-Sí, para una barbería pequeña (~200-500 conversaciones/mes). Las conversaciones de servicio (cliente te escribe primero) son gratis hasta 1,000/mes. AWS Free Tier cubre Lambda, API Gateway y DynamoDB.
-
-**¿Qué pasa después de 12 meses de AWS?**
-Lambda y DynamoDB siguen siendo gratis. API Gateway costaría ~$0.003/mes para el volumen de una barbería. Prácticamente nada.
+**¿Es realmente gratis para siempre?**
+Sí. Vercel Free Tier, MongoDB Atlas M0, y WhatsApp conversaciones de servicio son gratis sin fecha de expiración.
 
 **¿Puedo usar mi número personal de WhatsApp?**
-No. Necesitas un número dedicado para WhatsApp Business. No puede estar registrado en WhatsApp personal.
+No. Necesitas un número dedicado para WhatsApp Business que no esté registrado en WhatsApp personal.
 
 **¿El bot responde 24/7?**
-Sí. Lambda se ejecuta automáticamente cuando llega un mensaje.
+Sí. Vercel ejecuta la función automáticamente cuando llega un mensaje.
+
+**¿Cómo obtengo un token permanente de WhatsApp?**
+1. Ve a Meta Business Settings → System Users → Add
+2. Crea un System User con rol Admin
+3. Asigna la app al System User
+4. Genera un token con permisos: `whatsapp_business_management`, `whatsapp_business_messaging`
 
 **¿Puedo agregar IA/ChatGPT?**
 Sí, pero eso tendría costo adicional (OpenAI API). La versión actual usa detección de keywords que es gratis y suficiente para una barbería.
+
+**¿Qué pasa si supero los 512MB de MongoDB?**
+Para una barbería, 512MB alcanza para miles de citas. Si algún día lo superas, puedes hacer upgrade por ~$9/mes.
+
+**¿Cómo actualizo el bot?**
+Edita los archivos, haz `git push`, y Vercel despliega automáticamente.
 
 ---
 
