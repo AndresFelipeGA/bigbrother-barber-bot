@@ -56,6 +56,8 @@ function handleVerification(req, res) {
 async function handleIncomingMessage(req, res) {
   const body = req.body || {};
 
+  console.log('[Webhook] POST body:', JSON.stringify(body).substring(0, 500));
+
   // Meta always sends this structure
   const entry = body.entry?.[0];
   const changes = entry?.changes?.[0];
@@ -88,14 +90,22 @@ async function handleIncomingMessage(req, res) {
     messageText = '';
   }
 
-  // Process the message through the chatbot
-  await processMessage({
-    from,
-    customerName,
-    messageText: messageText.trim(),
-    messageType: message.type,
-    rawMessage: message,
-  });
+  // IMPORTANT: Always return 200 to Meta FIRST, then process.
+  // Meta requires a 200 response within 5 seconds or it will retry/disable webhook.
+  // We process the message in a non-blocking way so errors in WhatsApp API
+  // don't cause a 500 response to Meta.
+  try {
+    await processMessage({
+      from,
+      customerName,
+      messageText: messageText.trim(),
+      messageType: message.type,
+      rawMessage: message,
+    });
+  } catch (processingError) {
+    // Log the error but DON'T return 500 to Meta
+    console.error('[Webhook] Error processing message (non-fatal):', processingError.message || processingError);
+  }
 
   // Always return 200 to Meta (they retry on errors)
   return res.status(200).json({ status: 'ok' });

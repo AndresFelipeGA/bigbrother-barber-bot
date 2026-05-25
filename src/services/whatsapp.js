@@ -2,7 +2,7 @@
 
 const https = require('https');
 
-const GRAPH_API_VERSION = 'v21.0';
+const GRAPH_API_VERSION = 'v22.0';
 
 /**
  * WhatsApp Cloud API Service
