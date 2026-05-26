@@ -19,11 +19,46 @@
     "Domingo": "Cerrado"
   },
   "services": [
-    { "name": "Corte de cabello", "price": 15000, "emoji": "✂️", "duration": 60 },
-    { "name": "Arreglo de barba", "price": 10000, "emoji": "🧔", "duration": 60 },
-    { "name": "Corte + Barba", "price": 22000, "emoji": "✂️🧔", "duration": 60 },
-    { "name": "Afeitado clásico", "price": 12000, "emoji": "🪒", "duration": 60 },
-    { "name": "Tratamiento capilar", "price": 25000, "emoji": "💆", "duration": 60 }
+    {
+      "name": "Corte de cabello",
+      "price": 15000,
+      "emoji": "✂️",
+      "duration": 60,
+      "image": "https://images.unsplash.com/photo-1599351431202-1e0f0137899a?w=120&h=120&fit=crop&crop=faces",
+      "description": "Corte personalizado + lavado y peinado"
+    },
+    {
+      "name": "Arreglo de barba",
+      "price": 10000,
+      "emoji": "🧔",
+      "duration": 60,
+      "image": "https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=120&h=120&fit=crop&crop=faces",
+      "description": "Perfilado y arreglo de barba con navaja"
+    },
+    {
+      "name": "Corte + Barba",
+      "price": 22000,
+      "emoji": "✂️🧔",
+      "duration": 60,
+      "image": "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=120&h=120&fit=crop&crop=faces",
+      "description": "Corte de cabello + arreglo de barba completo"
+    },
+    {
+      "name": "Afeitado clásico",
+      "price": 12000,
+      "emoji": "🪒",
+      "duration": 60,
+      "image": "https://images.unsplash.com/photo-1585747860715-2ba37e788b70?w=120&h=120&fit=crop&crop=faces",
+      "description": "Afeitado con navaja, toalla caliente y loción"
+    },
+    {
+      "name": "Tratamiento capilar",
+      "price": 25000,
+      "emoji": "💆",
+      "duration": 60,
+      "image": "https://images.unsplash.com/photo-1560869713-7d0a29430803?w=120&h=120&fit=crop&crop=faces",
+      "description": "Tratamiento hidratante y masaje capilar"
+    }
   ],
   "currency": "COP",
   "currencySymbol": "$",
