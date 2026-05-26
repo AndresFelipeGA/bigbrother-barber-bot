@@ -120,7 +120,13 @@
       flex-direction: column;
     }
     .profile-right {
-      justify-content: stretch;
+      justify-content: flex-start;
+    }
+    .profile-section-title {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 0.4rem;
     }
     .profile-header {
       display: flex;
@@ -198,8 +204,8 @@
       border-radius: 8px;
       overflow: hidden;
       border: 1px solid var(--border);
-      height: 100%;
-      min-height: 140px;
+      height: 140px;
+      margin-bottom: 0.75rem;
       flex-shrink: 0;
     }
     .map-container iframe {
@@ -479,9 +485,6 @@
       .profile-card {
         grid-template-columns: 1fr;
       }
-      .map-container {
-        min-height: 180px;
-      }
     }
   </style>
 </head>
@@ -502,7 +505,7 @@
         <img src="/img/barberia1.jpg" alt="Big Brother Barber Shop">
       </div>
 
-      <!-- Profile Card (two columns: info | map) -->
+      <!-- Profile Card (two columns: contact | schedule) -->
       <div class="profile-card">
         <div class="profile-left">
           <div class="profile-header">
@@ -510,12 +513,8 @@
             <div>
               <div class="profile-name">BIG BROTHER BARBER SHOP</div>
               <div class="profile-slogan">Tu estilo, nuestra pasión</div>
-              <div class="profile-social">
-                <a href="https://instagram.com/big_brobarber" target="_blank">📸 @big_brobarber</a>
-              </div>
             </div>
           </div>
-
           <div class="info-rows">
             <div class="info-row">
               <span class="icon">📍</span>
@@ -530,26 +529,30 @@
               <a href="https://wa.me/573124717131" target="_blank">WhatsApp</a>
             </div>
             <div class="info-row">
-              <span class="icon">🕐</span>
-              <div class="schedule-mini">
-                <span class="day">Lun - Vie</span><span class="hours">9:00 AM - 8:00 PM</span>
-                <span class="day">Sábado</span><span class="hours">9:00 AM - 6:00 PM</span>
-                <span class="day">Domingo</span><span class="hours closed">Cerrado</span>
-              </div>
+              <span class="icon">📸</span>
+              <a href="https://instagram.com/big_brobarber" target="_blank">@big_brobarber</a>
             </div>
           </div>
         </div>
 
         <div class="profile-right">
-          <div class="map-container">
-            <iframe
-              src="https://maps.google.com/maps?q=Cl.+68+%2354-38,+Barrios+Unidos,+Bogot%C3%A1,+Colombia&t=&z=17&ie=UTF8&iwloc=&output=embed"
-              allowfullscreen=""
-              loading="lazy"
-              referrerpolicy="no-referrer-when-downgrade">
-            </iframe>
+          <div class="profile-section-title">🕐 Horario</div>
+          <div class="schedule-mini">
+            <span class="day">Lun - Vie</span><span class="hours">9:00 AM - 8:00 PM</span>
+            <span class="day">Sábado</span><span class="hours">9:00 AM - 6:00 PM</span>
+            <span class="day">Domingo</span><span class="hours closed">Cerrado</span>
           </div>
         </div>
+      </div>
+
+      <!-- Map -->
+      <div class="map-container">
+        <iframe
+          src="https://maps.google.com/maps?q=Cl.+68+%2354-38,+Barrios+Unidos,+Bogot%C3%A1,+Colombia&t=&z=17&ie=UTF8&iwloc=&output=embed"
+          allowfullscreen=""
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade">
+        </iframe>
       </div>
 
       <div class="footer">
