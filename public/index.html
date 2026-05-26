@@ -199,6 +199,72 @@
     .schedule-mini .hours { color: var(--text-primary); font-weight: 500; }
     .schedule-mini .closed { color: var(--accent); }
 
+    /* Barber selection */
+    .barbers-grid {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 0.5rem;
+    }
+    .barber-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.4rem;
+      cursor: pointer;
+      padding: 0.6rem;
+      border-radius: var(--radius);
+      border: 2px solid transparent;
+      transition: all 0.2s;
+      width: 80px;
+    }
+    .barber-card:hover {
+      border-color: var(--border);
+      background: rgba(255,255,255,0.03);
+    }
+    .barber-card.selected {
+      border-color: var(--accent);
+      background: rgba(196, 30, 42, 0.1);
+    }
+    .barber-avatar {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #333, #555);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      color: var(--text-primary);
+      border: 2px solid var(--border);
+      overflow: hidden;
+    }
+    .barber-card.selected .barber-avatar {
+      border-color: var(--accent);
+    }
+    .barber-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .barber-name {
+      font-size: 0.7rem;
+      color: var(--text-secondary);
+      text-align: center;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      line-height: 1.2;
+      max-width: 80px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .barber-card.selected .barber-name {
+      color: var(--accent);
+    }
+
     /* Map */
     .map-container {
       border-radius: 8px;
@@ -571,6 +637,7 @@
         <div class="step-dot" id="dot-3"></div>
         <div class="step-dot" id="dot-4"></div>
         <div class="step-dot" id="dot-5"></div>
+        <div class="step-dot" id="dot-6"></div>
       </div>
 
       <div id="error-box" class="error-msg"></div>
@@ -583,24 +650,31 @@
         </div>
       </div>
 
-      <!-- STEP 2: Select Date -->
+      <!-- STEP 2: Select Barber -->
       <div class="step" id="step-2">
-        <div class="section-title">¿Qué día prefieres?</div>
-        <div class="section-subtitle">Próximos 8 días disponibles</div>
-        <div class="date-grid" id="date-list"></div>
+        <div class="section-title">¿Con quién prefieres?</div>
+        <div class="barbers-grid" id="barbers-list"></div>
         <button class="btn-secondary" onclick="goToStep(1)">← Cambiar servicio</button>
       </div>
 
-      <!-- STEP 3: Select Time -->
+      <!-- STEP 3: Select Date -->
       <div class="step" id="step-3">
+        <div class="section-title">¿Qué día prefieres?</div>
+        <div class="section-subtitle">Próximos 8 días disponibles</div>
+        <div class="date-grid" id="date-list"></div>
+        <button class="btn-secondary" onclick="goToStep(2)">← Cambiar barbero</button>
+      </div>
+
+      <!-- STEP 4: Select Time -->
+      <div class="step" id="step-4">
         <div class="section-title">¿A qué hora?</div>
         <div class="section-subtitle" id="selected-date-label"></div>
         <div id="time-list"></div>
-        <button class="btn-secondary" onclick="goToStep(2)">← Cambiar fecha</button>
+        <button class="btn-secondary" onclick="goToStep(3)">← Cambiar fecha</button>
       </div>
 
-      <!-- STEP 4: Your Info -->
-      <div class="step" id="step-4">
+      <!-- STEP 5: Your Info -->
+      <div class="step" id="step-5">
         <div class="section-title">Tus datos</div>
         <div class="form-group">
           <label>Nombre completo</label>
@@ -612,11 +686,11 @@
         </div>
         <div class="summary-card" id="pre-summary"></div>
         <button class="btn-primary" id="btn-confirm" onclick="confirmBooking()">Confirmar Reserva</button>
-        <button class="btn-secondary" onclick="goToStep(3)">← Cambiar hora</button>
+        <button class="btn-secondary" onclick="goToStep(4)">← Cambiar hora</button>
       </div>
 
-      <!-- STEP 5: Success -->
-      <div class="step" id="step-5">
+      <!-- STEP 6: Success -->
+      <div class="step" id="step-6">
         <div class="success-icon">✅</div>
         <div class="success-title">¡Reserva Confirmada!</div>
         <div class="success-msg">Te esperamos en Big Brother Barber Shop</div>
@@ -631,9 +705,18 @@
     const API_BASE = '/api/appointments';
     let config = null;
     let selectedService = null;
+    let selectedBarber = null;
     let selectedDate = null;
     let selectedTime = null;
     let currentStep = 1;
+
+    // ============ BARBERS ============
+    const barbers = [
+      { id: 'david', name: 'David', emoji: '💇‍♂️' },
+      { id: 'carlos', name: 'Carlos', emoji: '✂️' },
+      { id: 'miguel', name: 'Miguel', emoji: '💈' },
+      { id: 'andres', name: 'Andrés', emoji: '🪒' },
+    ];
 
     // ============ INIT ============
     async function init() {
@@ -656,7 +739,7 @@
     }
 
     function updateDots() {
-      for (let i = 1; i <= 5; i++) {
+      for (let i = 1; i <= 6; i++) {
         const dot = document.getElementById(`dot-${i}`);
         dot.classList.remove('active', 'done');
         if (i < currentStep) dot.classList.add('done');
@@ -684,12 +767,33 @@
       document.querySelectorAll('.service-card').forEach(c => c.classList.remove('selected'));
       document.getElementById(`svc-${index}`).classList.add('selected');
       setTimeout(() => {
-        renderDates();
+        renderBarbers();
         goToStep(2);
       }, 200);
     }
 
-    // ============ STEP 2: DATES ============
+    // ============ STEP 2: BARBERS ============
+    function renderBarbers() {
+      const container = document.getElementById('barbers-list');
+      container.innerHTML = barbers.map((b, i) => `
+        <div class="barber-card" onclick="selectBarber(${i})" id="barber-${i}">
+          <div class="barber-avatar">${b.emoji}</div>
+          <div class="barber-name">${b.name}</div>
+        </div>
+      `).join('');
+    }
+
+    function selectBarber(index) {
+      selectedBarber = barbers[index];
+      document.querySelectorAll('.barber-card').forEach(c => c.classList.remove('selected'));
+      document.getElementById(`barber-${index}`).classList.add('selected');
+      setTimeout(() => {
+        renderDates();
+        goToStep(3);
+      }, 200);
+    }
+
+    // ============ STEP 3: DATES ============
     function getColombiaDate() {
       const now = new Date();
       const colombiaStr = now.toLocaleString('en-US', { timeZone: 'America/Bogota' });
@@ -744,11 +848,11 @@
       el.classList.add('selected');
       setTimeout(() => {
         loadTimeSlots();
-        goToStep(3);
+        goToStep(4);
       }, 200);
     }
 
-    // ============ STEP 3: TIME SLOTS ============
+    // ============ STEP 4: TIME SLOTS ============
     async function loadTimeSlots() {
       const container = document.getElementById('time-list');
       document.getElementById('selected-date-label').textContent = `📅 ${selectedDate}`;
@@ -777,16 +881,20 @@
       el.classList.add('selected');
       setTimeout(() => {
         renderPreSummary();
-        goToStep(4);
+        goToStep(5);
       }, 200);
     }
 
-    // ============ STEP 4: CONFIRM ============
+    // ============ STEP 5: CONFIRM ============
     function renderPreSummary() {
       document.getElementById('pre-summary').innerHTML = `
         <div class="summary-row">
           <span class="summary-label">Servicio</span>
           <span class="summary-value">${selectedService.emoji} ${selectedService.name}</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">Barbero</span>
+          <span class="summary-value">${selectedBarber.emoji} ${selectedBarber.name}</span>
         </div>
         <div class="summary-row">
           <span class="summary-label">Fecha</span>
@@ -826,6 +934,7 @@
             customerName: name,
             customerPhone: phone,
             service: selectedService.name,
+            barber: selectedBarber.name,
             date: selectedDate,
             time: selectedTime,
           }),
@@ -838,7 +947,7 @@
 
         const appointment = await res.json();
         renderFinalSummary(appointment);
-        goToStep(5);
+        goToStep(6);
       } catch (err) {
         showError(err.message);
       } finally {
@@ -862,6 +971,10 @@
           <span class="summary-value">${apt.service}</span>
         </div>
         <div class="summary-row">
+          <span class="summary-label">Barbero</span>
+          <span class="summary-value">💈 ${apt.barber || selectedBarber.name}</span>
+        </div>
+        <div class="summary-row">
           <span class="summary-label">Fecha</span>
           <span class="summary-value">📅 ${apt.date}</span>
         </div>
@@ -882,6 +995,7 @@
 
     function resetBooking() {
       selectedService = null;
+      selectedBarber = null;
       selectedDate = null;
       selectedTime = null;
       document.getElementById('input-name').value = '';

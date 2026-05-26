@@ -84,7 +84,7 @@ async function handleGet(req, res) {
 }
 
 async function handlePost(req, res) {
-  const { customerName, customerPhone, service, date, time } = req.body;
+  const { customerName, customerPhone, service, barber, date, time } = req.body;
 
   // Validate required fields
   if (!customerName || !customerPhone || !service || !date || !time) {
@@ -114,6 +114,7 @@ async function handlePost(req, res) {
     customerPhone,
     service: serviceInfo.name,
     servicePrice: serviceInfo.price,
+    barber: barber || null,
     date,
     time,
     source: 'web',
