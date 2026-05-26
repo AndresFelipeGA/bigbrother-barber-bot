@@ -36,33 +36,177 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    /* Header */
-    .header {
-      text-align: center;
-      padding: 2rem 1rem 1.5rem;
-      background: linear-gradient(180deg, #151515 0%, var(--bg-dark) 100%);
-      border-bottom: 1px solid var(--border);
+    /* ===== TWO-PANEL LAYOUT ===== */
+    .page-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      min-height: 100vh;
     }
-    .header .logo {
+
+    /* Left Panel - Info */
+    .panel-left {
+      border-right: 1px solid var(--border);
+      overflow-y: auto;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Right Panel - Booking */
+    .panel-right {
+      overflow-y: auto;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ===== LEFT PANEL CONTENT ===== */
+
+    /* Header */
+    .brand {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    .brand .emoji { font-size: 2rem; margin-bottom: 0.25rem; }
+    .brand .logo {
       font-family: 'Bebas Neue', sans-serif;
       font-size: 2.5rem;
       letter-spacing: 3px;
       color: var(--accent);
       line-height: 1;
     }
-    .header .tagline {
+    .brand .tagline {
       color: var(--text-secondary);
-      font-size: 0.85rem;
-      margin-top: 0.25rem;
+      font-size: 0.8rem;
       letter-spacing: 1px;
     }
-    .header .emoji { font-size: 2rem; margin-bottom: 0.5rem; }
 
-    /* Container */
-    .container {
-      max-width: 480px;
-      margin: 0 auto;
-      padding: 1.5rem 1rem 3rem;
+    /* Photo */
+    .hero-photo {
+      width: 100%;
+      aspect-ratio: 16/9;
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin-bottom: 1.25rem;
+      border: 1px solid var(--border);
+    }
+    .hero-photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .hero-photo.placeholder {
+      background: #1e1e1e;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+
+    /* Profile info */
+    .profile-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      margin-bottom: 1.25rem;
+    }
+    .profile-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+    .profile-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent-dark), var(--accent));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      flex-shrink: 0;
+    }
+    .profile-name {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.2rem;
+      letter-spacing: 1.5px;
+      color: var(--text-primary);
+      line-height: 1.1;
+    }
+    .profile-slogan {
+      font-size: 0.7rem;
+      color: var(--text-secondary);
+      margin-top: 0.1rem;
+    }
+    .profile-social a {
+      color: var(--text-secondary);
+      font-size: 0.7rem;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .profile-social a:hover { color: var(--accent); }
+
+    .info-rows {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .info-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.6rem;
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+    }
+    .info-row .icon {
+      font-size: 0.9rem;
+      flex-shrink: 0;
+      width: 18px;
+      text-align: center;
+    }
+    .info-row a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .info-row a:hover { text-decoration: underline; }
+
+    .schedule-mini {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 0.1rem 0.5rem;
+      font-size: 0.75rem;
+    }
+    .schedule-mini .day { color: var(--text-secondary); }
+    .schedule-mini .hours { color: var(--text-primary); font-weight: 500; }
+    .schedule-mini .closed { color: var(--accent); }
+
+    /* Map */
+    .map-container {
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 1px solid var(--border);
+      height: 160px;
+      flex-shrink: 0;
+    }
+    .map-container iframe {
+      width: 100%;
+      height: 100%;
+      border: 0;
+      filter: grayscale(0.8) invert(0.92) contrast(0.9);
+    }
+
+    /* ===== RIGHT PANEL CONTENT ===== */
+
+    .panel-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.5rem;
+      letter-spacing: 1px;
+      color: var(--text-primary);
+      text-align: center;
+      margin-bottom: 1.5rem;
     }
 
     /* Steps indicator */
@@ -70,7 +214,7 @@
       display: flex;
       justify-content: center;
       gap: 0.5rem;
-      margin-bottom: 2rem;
+      margin-bottom: 1.5rem;
     }
     .step-dot {
       width: 10px;
@@ -84,29 +228,28 @@
 
     /* Section titles */
     .section-title {
-      font-size: 1.1rem;
+      font-size: 1rem;
       font-weight: 700;
-      margin-bottom: 1rem;
-      color: var(--text-primary);
+      margin-bottom: 0.75rem;
     }
     .section-subtitle {
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       color: var(--text-secondary);
-      margin-bottom: 1rem;
-      margin-top: -0.5rem;
+      margin-bottom: 0.75rem;
+      margin-top: -0.4rem;
     }
 
     /* Service cards */
     .services-grid {
       display: flex;
       flex-direction: column;
-      gap: 0.75rem;
+      gap: 0.6rem;
     }
     .service-card {
       display: flex;
       align-items: center;
-      gap: 1rem;
-      padding: 1rem;
+      gap: 0.75rem;
+      padding: 0.85rem;
       background: var(--bg-card);
       border: 2px solid var(--border);
       border-radius: var(--radius);
@@ -115,18 +258,14 @@
     }
     .service-card:hover { border-color: var(--accent-dark); }
     .service-card.selected { border-color: var(--accent); background: #1a0f0f; }
-    .service-card .emoji { font-size: 1.5rem; }
+    .service-card .emoji { font-size: 1.3rem; }
     .service-card .info { flex: 1; }
-    .service-card .name { font-weight: 600; font-size: 0.95rem; }
-    .service-card .details {
-      font-size: 0.8rem;
-      color: var(--text-secondary);
-      margin-top: 0.15rem;
-    }
+    .service-card .name { font-weight: 600; font-size: 0.9rem; }
+    .service-card .details { font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.1rem; }
     .service-card .price {
       font-weight: 700;
       color: var(--silver-light);
-      font-size: 1rem;
+      font-size: 0.95rem;
       white-space: nowrap;
     }
 
@@ -134,10 +273,10 @@
     .date-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 0.5rem;
+      gap: 0.4rem;
     }
     .date-btn {
-      padding: 0.75rem 0.25rem;
+      padding: 0.6rem 0.2rem;
       background: var(--bg-card);
       border: 2px solid var(--border);
       border-radius: var(--radius);
@@ -149,29 +288,24 @@
     }
     .date-btn:hover { border-color: var(--accent-dark); }
     .date-btn.selected { border-color: var(--accent); background: #1a0f0f; }
-    .date-btn.disabled {
-      opacity: 0.3;
-      cursor: not-allowed;
-      pointer-events: none;
-    }
-    .date-btn .day-name { font-size: 0.7rem; color: var(--text-secondary); text-transform: uppercase; }
-    .date-btn .day-num { font-size: 1.2rem; font-weight: 700; margin: 0.15rem 0; }
-    .date-btn .month { font-size: 0.7rem; color: var(--text-muted); }
+    .date-btn .day-name { font-size: 0.65rem; color: var(--text-secondary); text-transform: uppercase; }
+    .date-btn .day-num { font-size: 1.1rem; font-weight: 700; margin: 0.1rem 0; }
+    .date-btn .month { font-size: 0.65rem; color: var(--text-muted); }
 
     /* Time slots */
     .time-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 0.5rem;
+      gap: 0.4rem;
     }
     .time-btn {
-      padding: 0.65rem;
+      padding: 0.55rem;
       background: var(--bg-card);
       border: 2px solid var(--border);
       border-radius: var(--radius);
       color: var(--text-primary);
       cursor: pointer;
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       font-weight: 500;
       font-family: inherit;
       transition: all 0.2s;
@@ -180,24 +314,22 @@
     .time-btn.selected { border-color: var(--accent); background: #1a0f0f; }
 
     /* Form inputs */
-    .form-group {
-      margin-bottom: 1rem;
-    }
+    .form-group { margin-bottom: 0.75rem; }
     .form-group label {
       display: block;
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       font-weight: 600;
-      margin-bottom: 0.4rem;
+      margin-bottom: 0.3rem;
       color: var(--text-secondary);
     }
     .form-group input {
       width: 100%;
-      padding: 0.75rem 1rem;
+      padding: 0.65rem 0.85rem;
       background: var(--bg-input);
       border: 2px solid var(--border);
       border-radius: var(--radius);
       color: var(--text-primary);
-      font-size: 1rem;
+      font-size: 0.9rem;
       font-family: inherit;
       outline: none;
       transition: border-color 0.2s;
@@ -208,35 +340,32 @@
     /* Buttons */
     .btn-primary {
       width: 100%;
-      padding: 1rem;
+      padding: 0.85rem;
       background: var(--accent);
       color: #fff;
       border: none;
       border-radius: var(--radius);
-      font-size: 1rem;
+      font-size: 0.95rem;
       font-weight: 700;
       font-family: inherit;
       cursor: pointer;
       transition: all 0.2s;
-      margin-top: 1.5rem;
+      margin-top: 1rem;
       letter-spacing: 0.5px;
     }
     .btn-primary:hover { background: var(--accent-light); }
-    .btn-primary:disabled {
-      opacity: 0.4;
-      cursor: not-allowed;
-    }
+    .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
     .btn-secondary {
       width: 100%;
-      padding: 0.75rem;
+      padding: 0.6rem;
       background: transparent;
       color: var(--text-secondary);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       font-family: inherit;
       cursor: pointer;
-      margin-top: 0.75rem;
+      margin-top: 0.5rem;
       transition: all 0.2s;
     }
     .btn-secondary:hover { color: var(--text-primary); border-color: var(--text-secondary); }
@@ -246,50 +375,42 @@
       background: var(--bg-card);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 1.25rem;
-      margin-bottom: 1rem;
+      padding: 1rem;
+      margin-bottom: 0.75rem;
     }
     .summary-row {
       display: flex;
       justify-content: space-between;
-      padding: 0.5rem 0;
-      border-bottom: 1px solid #222;
+      padding: 0.35rem 0;
+      border-bottom: 1px solid #1a1a1a;
     }
     .summary-row:last-child { border-bottom: none; }
-    .summary-label { color: var(--text-secondary); font-size: 0.85rem; }
-    .summary-value { font-weight: 600; font-size: 0.9rem; }
+    .summary-label { color: var(--text-secondary); font-size: 0.8rem; }
+    .summary-value { font-weight: 600; font-size: 0.85rem; }
     .summary-value.gold { color: var(--silver-light); }
 
-    /* Success screen */
-    .success-icon {
-      font-size: 4rem;
-      text-align: center;
-      margin-bottom: 1rem;
-    }
+    /* Success */
+    .success-icon { font-size: 3rem; text-align: center; margin-bottom: 0.75rem; }
     .success-title {
       text-align: center;
-      font-size: 1.5rem;
+      font-size: 1.3rem;
       font-weight: 700;
       color: var(--success);
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.4rem;
     }
     .success-msg {
       text-align: center;
       color: var(--text-secondary);
-      font-size: 0.9rem;
-      margin-bottom: 1.5rem;
+      font-size: 0.85rem;
+      margin-bottom: 1rem;
     }
 
     /* Loading */
-    .loading {
-      text-align: center;
-      padding: 2rem;
-      color: var(--text-secondary);
-    }
+    .loading { text-align: center; padding: 1.5rem; color: var(--text-secondary); }
     .spinner {
       display: inline-block;
-      width: 24px;
-      height: 24px;
+      width: 22px;
+      height: 22px;
       border: 3px solid var(--border);
       border-top-color: var(--accent);
       border-radius: 50%;
@@ -302,351 +423,184 @@
       background: #2d1111;
       border: 1px solid var(--error);
       color: var(--error);
-      padding: 0.75rem 1rem;
+      padding: 0.6rem 0.85rem;
       border-radius: var(--radius);
-      font-size: 0.85rem;
-      margin-bottom: 1rem;
+      font-size: 0.8rem;
+      margin-bottom: 0.75rem;
       display: none;
     }
     .error-msg.show { display: block; }
 
-    /* Info bar */
-    .info-bar {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.75rem 1rem;
-      background: #111;
-      border-radius: var(--radius);
-      margin-bottom: 1.5rem;
-      font-size: 0.8rem;
-      color: var(--text-secondary);
-    }
-    .info-bar a {
-      color: var(--accent);
-      text-decoration: none;
-    }
-
-    /* Footer */
-    .footer {
+    .no-slots {
       text-align: center;
-      padding: 2rem 1rem;
+      padding: 1.5rem;
       color: var(--text-muted);
-      font-size: 0.75rem;
-      border-top: 1px solid #1a1a1a;
+      font-size: 0.85rem;
     }
-    .footer a { color: var(--accent-dark); text-decoration: none; }
 
     /* Hide sections */
     .step { display: none; }
     .step.active { display: block; }
 
-    /* No slots message */
-    .no-slots {
+    /* Footer */
+    .footer {
       text-align: center;
-      padding: 2rem;
+      padding: 1rem;
       color: var(--text-muted);
-      font-size: 0.9rem;
+      font-size: 0.7rem;
+      margin-top: auto;
     }
+    .footer a { color: var(--accent-dark); text-decoration: none; }
 
-    /* ===== HERO / PROFILE SECTION ===== */
-    .hero {
-      max-width: 480px;
-      margin: 0 auto;
-      padding: 0 1rem;
-    }
-
-    /* Photo gallery */
-    .gallery {
-      display: flex;
-      gap: 0.5rem;
-      overflow-x: auto;
-      padding: 1.5rem 0 1rem;
-      scroll-snap-type: x mandatory;
-      -webkit-overflow-scrolling: touch;
-    }
-    .gallery::-webkit-scrollbar { display: none; }
-    .gallery-item {
-      flex: 0 0 75%;
-      scroll-snap-align: start;
-      aspect-ratio: 16/10;
-      background: #1e1e1e;
-      border-radius: var(--radius);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      color: var(--text-muted);
-      font-size: 0.8rem;
-      border: 1px solid var(--border);
-      overflow: hidden;
-    }
-    .gallery-item svg {
-      width: 40px;
-      height: 40px;
-      margin-bottom: 0.5rem;
-      opacity: 0.3;
-    }
-
-    /* Profile card */
-    .profile-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 1.25rem;
-      margin-bottom: 1rem;
-    }
-    .profile-header {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      margin-bottom: 1rem;
-    }
-    .profile-avatar {
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--accent-dark), var(--accent));
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.5rem;
-      flex-shrink: 0;
-    }
-    .profile-name {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 1.4rem;
-      letter-spacing: 1.5px;
-      color: var(--text-primary);
-      line-height: 1.1;
-    }
-    .profile-slogan {
-      font-size: 0.75rem;
-      color: var(--text-secondary);
-      margin-top: 0.15rem;
-    }
-    .profile-social {
-      display: flex;
-      gap: 0.5rem;
-      margin-top: 0.35rem;
-    }
-    .profile-social a {
-      color: var(--text-secondary);
-      font-size: 0.75rem;
-      text-decoration: none;
-      display: flex;
-      align-items: center;
-      gap: 0.25rem;
-      transition: color 0.2s;
-    }
-    .profile-social a:hover { color: var(--accent); }
-
-    /* Info rows */
-    .info-rows {
-      display: flex;
-      flex-direction: column;
-      gap: 0.6rem;
-    }
-    .info-row {
-      display: flex;
-      align-items: flex-start;
-      gap: 0.75rem;
-      font-size: 0.85rem;
-      color: var(--text-secondary);
-    }
-    .info-row .icon {
-      font-size: 1rem;
-      flex-shrink: 0;
-      width: 20px;
-      text-align: center;
-    }
-    .info-row a {
-      color: var(--accent);
-      text-decoration: none;
-    }
-    .info-row a:hover { text-decoration: underline; }
-
-    /* Schedule mini */
-    .schedule-mini {
-      display: grid;
-      grid-template-columns: auto 1fr;
-      gap: 0.15rem 0.75rem;
-      font-size: 0.8rem;
-      margin-top: 0.25rem;
-    }
-    .schedule-mini .day { color: var(--text-secondary); }
-    .schedule-mini .hours { color: var(--text-primary); font-weight: 500; }
-    .schedule-mini .closed { color: var(--accent); }
-
-    /* Map */
-    .map-container {
-      border-radius: var(--radius);
-      overflow: hidden;
-      border: 1px solid var(--border);
-      margin-bottom: 1.5rem;
-      height: 180px;
-    }
-    .map-container iframe {
-      width: 100%;
-      height: 100%;
-      border: 0;
-      filter: grayscale(0.8) invert(0.92) contrast(0.9);
-    }
-
-    /* Divider */
-    .section-divider {
-      height: 1px;
-      background: var(--border);
-      margin: 0.5rem 0 1.5rem;
+    /* ===== RESPONSIVE: Mobile stacks vertically ===== */
+    @media (max-width: 900px) {
+      .page-layout {
+        grid-template-columns: 1fr;
+      }
+      .panel-left {
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+        padding: 1.5rem 1rem;
+      }
+      .panel-right {
+        padding: 1.5rem 1rem;
+      }
     }
   </style>
 </head>
 <body>
 
-  <div class="header">
-    <div class="emoji">💈</div>
-    <div class="logo">BIG BROTHER</div>
-    <div class="tagline">BARBER SHOP · RESERVAS ONLINE</div>
-  </div>
-
-  <!-- ===== HERO / PROFILE SECTION ===== -->
-  <div class="hero">
-    <!-- Photo Gallery -->
-    <div class="gallery">
-      <div class="gallery-item" style="background:url('/img/barberia1.jpg') center/cover no-repeat"></div>
-      <div class="gallery-item">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
-        <span>Próximamente</span>
+  <div class="page-layout">
+    <!-- ===== LEFT PANEL: Info ===== -->
+    <div class="panel-left">
+      <!-- Brand -->
+      <div class="brand">
+        <div class="emoji">💈</div>
+        <div class="logo">BIG BROTHER</div>
+        <div class="tagline">BARBER SHOP</div>
       </div>
-      <div class="gallery-item">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
-        <span>Próximamente</span>
-      </div>
-    </div>
 
-    <!-- Profile Card -->
-    <div class="profile-card">
-      <div class="profile-header">
-        <div class="profile-avatar">💈</div>
-        <div>
-          <div class="profile-name">BIG BROTHER BARBER SHOP</div>
-          <div class="profile-slogan">Tu estilo, nuestra pasión</div>
-          <div class="profile-social">
-            <a href="https://instagram.com/big_brobarber" target="_blank">📸 @big_brobarber</a>
+      <!-- Photo -->
+      <div class="hero-photo">
+        <img src="/img/barberia1.jpg" alt="Big Brother Barber Shop">
+      </div>
+
+      <!-- Profile Card -->
+      <div class="profile-card">
+        <div class="profile-header">
+          <div class="profile-avatar">💈</div>
+          <div>
+            <div class="profile-name">BIG BROTHER BARBER SHOP</div>
+            <div class="profile-slogan">Tu estilo, nuestra pasión</div>
+            <div class="profile-social">
+              <a href="https://instagram.com/big_brobarber" target="_blank">📸 @big_brobarber</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="info-rows">
+          <div class="info-row">
+            <span class="icon">📍</span>
+            <span>Cl. 68 #54-38, Barrios Unidos, Bogotá</span>
+          </div>
+          <div class="info-row">
+            <span class="icon">📞</span>
+            <a href="tel:+573124717131">312 471 7131</a>
+          </div>
+          <div class="info-row">
+            <span class="icon">💬</span>
+            <a href="https://wa.me/573124717131" target="_blank">WhatsApp</a>
+          </div>
+          <div class="info-row">
+            <span class="icon">🕐</span>
+            <div class="schedule-mini">
+              <span class="day">Lun - Vie</span><span class="hours">9:00 AM - 8:00 PM</span>
+              <span class="day">Sábado</span><span class="hours">9:00 AM - 6:00 PM</span>
+              <span class="day">Domingo</span><span class="hours closed">Cerrado</span>
+            </div>
           </div>
         </div>
       </div>
 
-      <div class="info-rows">
-        <div class="info-row">
-          <span class="icon">📍</span>
-          <span>Cl. 68 #54-38, Barrios Unidos, Bogotá, Cundinamarca</span>
-        </div>
-        <div class="info-row">
-          <span class="icon">📞</span>
-          <a href="tel:+573124717131">312 471 7131</a>
-        </div>
-        <div class="info-row">
-          <span class="icon">💬</span>
-          <a href="https://wa.me/573124717131" target="_blank">Contáctanos por WhatsApp</a>
-        </div>
-        <div class="info-row">
-          <span class="icon">🕐</span>
-          <div class="schedule-mini">
-            <span class="day">Lun - Vie</span><span class="hours">9:00 AM - 8:00 PM</span>
-            <span class="day">Sábado</span><span class="hours">9:00 AM - 6:00 PM</span>
-            <span class="day">Domingo</span><span class="hours closed">Cerrado</span>
-          </div>
-        </div>
+      <!-- Map -->
+      <div class="map-container">
+        <iframe 
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d993.2!2d-74.0817!3d4.6097!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNMKwMzYnMzQuOSJOIDc0wrAwNCc1NC4xIlc!5e0!3m2!1ses!2sco!4v1"
+          allowfullscreen="" 
+          loading="lazy" 
+          referrerpolicy="no-referrer-when-downgrade">
+        </iframe>
+      </div>
+
+      <div class="footer">
+        <p>© 2024 Big Brother Barber Shop · <a href="https://maps.app.goo.gl/GvSGEfbtpDNz3mmE7" target="_blank">📍 Ubicación</a></p>
       </div>
     </div>
 
-    <!-- Google Maps -->
-    <div class="map-container">
-      <iframe
-        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d993.2!2d-74.0817!3d4.6097!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNMKwMzYnMzQuOSJOIDc0wrAwNCc1NC4xIlc!5e0!3m2!1ses!2sco!4v1"
-        allowfullscreen=""
-        loading="lazy"
-        referrerpolicy="no-referrer-when-downgrade">
-      </iframe>
-    </div>
+    <!-- ===== RIGHT PANEL: Booking ===== -->
+    <div class="panel-right">
+      <div class="panel-title">RESERVA TU CITA</div>
 
-    <div class="section-divider"></div>
-  </div>
-
-  <div class="container">
-    <!-- Steps indicator -->
-    <div class="steps">
-      <div class="step-dot active" id="dot-1"></div>
-      <div class="step-dot" id="dot-2"></div>
-      <div class="step-dot" id="dot-3"></div>
-      <div class="step-dot" id="dot-4"></div>
-      <div class="step-dot" id="dot-5"></div>
-    </div>
-
-    <div id="error-box" class="error-msg"></div>
-
-    <!-- STEP 1: Select Service -->
-    <div class="step active" id="step-1">
-      <div class="section-title">¿Qué servicio necesitas?</div>
-      <div class="services-grid" id="services-list">
-        <div class="loading"><div class="spinner"></div><p style="margin-top:0.5rem">Cargando servicios...</p></div>
-      </div>
-    </div>
-
-    <!-- STEP 2: Select Date -->
-    <div class="step" id="step-2">
-      <div class="section-title">¿Qué día prefieres?</div>
-      <div class="section-subtitle">Próximos 8 días disponibles</div>
-      <div class="date-grid" id="date-list"></div>
-      <button class="btn-secondary" onclick="goToStep(1)">← Cambiar servicio</button>
-    </div>
-
-    <!-- STEP 3: Select Time -->
-    <div class="step" id="step-3">
-      <div class="section-title">¿A qué hora?</div>
-      <div class="section-subtitle" id="selected-date-label"></div>
-      <div id="time-list"></div>
-      <button class="btn-secondary" onclick="goToStep(2)">← Cambiar fecha</button>
-    </div>
-
-    <!-- STEP 4: Your Info -->
-    <div class="step" id="step-4">
-      <div class="section-title">Tus datos</div>
-      <div class="form-group">
-        <label>Nombre completo</label>
-        <input type="text" id="input-name" placeholder="Ej: Juan Pérez" autocomplete="name">
-      </div>
-      <div class="form-group">
-        <label>Teléfono (WhatsApp)</label>
-        <input type="tel" id="input-phone" placeholder="Ej: 3124717131" autocomplete="tel">
+      <!-- Steps indicator -->
+      <div class="steps">
+        <div class="step-dot active" id="dot-1"></div>
+        <div class="step-dot" id="dot-2"></div>
+        <div class="step-dot" id="dot-3"></div>
+        <div class="step-dot" id="dot-4"></div>
+        <div class="step-dot" id="dot-5"></div>
       </div>
 
-      <div class="summary-card" id="pre-summary"></div>
+      <div id="error-box" class="error-msg"></div>
 
-      <button class="btn-primary" id="btn-confirm" onclick="confirmBooking()">
-        Confirmar Reserva
-      </button>
-      <button class="btn-secondary" onclick="goToStep(3)">← Cambiar hora</button>
+      <!-- STEP 1: Select Service -->
+      <div class="step active" id="step-1">
+        <div class="section-title">¿Qué servicio necesitas?</div>
+        <div class="services-grid" id="services-list">
+          <div class="loading"><div class="spinner"></div><p style="margin-top:0.5rem">Cargando...</p></div>
+        </div>
+      </div>
+
+      <!-- STEP 2: Select Date -->
+      <div class="step" id="step-2">
+        <div class="section-title">¿Qué día prefieres?</div>
+        <div class="section-subtitle">Próximos 8 días disponibles</div>
+        <div class="date-grid" id="date-list"></div>
+        <button class="btn-secondary" onclick="goToStep(1)">← Cambiar servicio</button>
+      </div>
+
+      <!-- STEP 3: Select Time -->
+      <div class="step" id="step-3">
+        <div class="section-title">¿A qué hora?</div>
+        <div class="section-subtitle" id="selected-date-label"></div>
+        <div id="time-list"></div>
+        <button class="btn-secondary" onclick="goToStep(2)">← Cambiar fecha</button>
+      </div>
+
+      <!-- STEP 4: Your Info -->
+      <div class="step" id="step-4">
+        <div class="section-title">Tus datos</div>
+        <div class="form-group">
+          <label>Nombre completo</label>
+          <input type="text" id="input-name" placeholder="Ej: Juan Pérez" autocomplete="name">
+        </div>
+        <div class="form-group">
+          <label>Teléfono (WhatsApp)</label>
+          <input type="tel" id="input-phone" placeholder="Ej: 3124717131" autocomplete="tel">
+        </div>
+        <div class="summary-card" id="pre-summary"></div>
+        <button class="btn-primary" id="btn-confirm" onclick="confirmBooking()">Confirmar Reserva</button>
+        <button class="btn-secondary" onclick="goToStep(3)">← Cambiar hora</button>
+      </div>
+
+      <!-- STEP 5: Success -->
+      <div class="step" id="step-5">
+        <div class="success-icon">✅</div>
+        <div class="success-title">¡Reserva Confirmada!</div>
+        <div class="success-msg">Te esperamos en Big Brother Barber Shop</div>
+        <div class="summary-card" id="final-summary"></div>
+        <button class="btn-primary" onclick="resetBooking()">Hacer otra reserva</button>
+      </div>
     </div>
-
-    <!-- STEP 5: Success -->
-    <div class="step" id="step-5">
-      <div class="success-icon">✅</div>
-      <div class="success-title">¡Reserva Confirmada!</div>
-      <div class="success-msg">Te esperamos en Big Brother Barber Shop</div>
-      <div class="summary-card" id="final-summary"></div>
-      <button class="btn-primary" onclick="resetBooking()">Hacer otra reserva</button>
-    </div>
-  </div>
-
-  <div class="info-bar" style="max-width:480px;margin:0 auto 0;margin-left:auto;margin-right:auto;">
-    📍 <a href="https://maps.app.goo.gl/GvSGEfbtpDNz3mmE7" target="_blank">Bogotá, Colombia</a>
-    &nbsp;·&nbsp; Lun-Vie 9AM-8PM &nbsp;·&nbsp; Sáb 9AM-6PM
-  </div>
-
-  <div class="footer">
-    <p>© 2024 Big Brother Barber Shop · <a href="https://maps.app.goo.gl/GvSGEfbtpDNz3mmE7" target="_blank">📍 Ubicación</a></p>
   </div>
 
   <script>
@@ -676,7 +630,6 @@
       currentStep = step;
       updateDots();
       hideError();
-      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     function updateDots() {
@@ -714,10 +667,8 @@
     }
 
     // ============ STEP 2: DATES ============
-    // Always use Colombia time (UTC-5) regardless of device timezone
     function getColombiaDate() {
       const now = new Date();
-      // Convert to Colombia time using Intl API
       const colombiaStr = now.toLocaleString('en-US', { timeZone: 'America/Bogota' });
       return new Date(colombiaStr);
     }
@@ -728,18 +679,15 @@
       const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
       const closedDays = [];
 
-      // Find closed days from config
       const dayMap = { 'Domingo': 0, 'Lunes': 1, 'Martes': 2, 'Miércoles': 3, 'Jueves': 4, 'Viernes': 5, 'Sábado': 6 };
       for (const [dayName, schedule] of Object.entries(config.schedule)) {
         if (schedule === 'Cerrado') closedDays.push(dayMap[dayName]);
       }
 
-      // Use Colombia time as base
       const colombiaToday = getColombiaDate();
-
       let html = '';
       let count = 0;
-      let offset = 0; // Start from TODAY (server filters past hours)
+      let offset = 0;
 
       while (count < 8) {
         const d = new Date(colombiaToday);
@@ -781,14 +729,14 @@
     async function loadTimeSlots() {
       const container = document.getElementById('time-list');
       document.getElementById('selected-date-label').textContent = `📅 ${selectedDate}`;
-      container.innerHTML = '<div class="loading"><div class="spinner"></div><p style="margin-top:0.5rem">Cargando horarios...</p></div>';
+      container.innerHTML = '<div class="loading"><div class="spinner"></div><p style="margin-top:0.5rem">Cargando...</p></div>';
 
       try {
         const res = await fetch(`${API_BASE}?slots=true&date=${encodeURIComponent(selectedDate)}`);
         const slots = await res.json();
 
         if (slots.length === 0) {
-          container.innerHTML = '<div class="no-slots">😔 No hay horarios disponibles para este día.<br>Prueba con otra fecha.</div>';
+          container.innerHTML = '<div class="no-slots">😔 No hay horarios disponibles.<br>Prueba otra fecha.</div>';
           return;
         }
 
@@ -796,7 +744,7 @@
           <button class="time-btn" onclick="selectTime('${t}', this)">${t}</button>
         `).join('')}</div>`;
       } catch (err) {
-        container.innerHTML = '<div class="no-slots">Error al cargar horarios. Intenta de nuevo.</div>';
+        container.innerHTML = '<div class="no-slots">Error al cargar horarios.</div>';
       }
     }
 
@@ -880,7 +828,7 @@
       document.getElementById('final-summary').innerHTML = `
         <div class="summary-row">
           <span class="summary-label">Código</span>
-          <span class="summary-value" style="font-size:0.75rem">${apt._id.substring(0, 8).toUpperCase()}</span>
+          <span class="summary-value" style="font-size:0.7rem">${apt._id.substring(0, 8).toUpperCase()}</span>
         </div>
         <div class="summary-row">
           <span class="summary-label">Nombre</span>
