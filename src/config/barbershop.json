@@ -18,11 +18,11 @@
     "Domingo": "Cerrado"
   },
   "services": [
-    { "name": "Corte de cabello", "price": 15000, "emoji": "✂️", "duration": 30 },
-    { "name": "Arreglo de barba", "price": 10000, "emoji": "🧔", "duration": 20 },
-    { "name": "Corte + Barba", "price": 22000, "emoji": "✂️🧔", "duration": 45 },
-    { "name": "Afeitado clásico", "price": 12000, "emoji": "🪒", "duration": 25 },
-    { "name": "Tratamiento capilar", "price": 25000, "emoji": "💆", "duration": 40 }
+    { "name": "Corte de cabello", "price": 15000, "emoji": "✂️", "duration": 60 },
+    { "name": "Arreglo de barba", "price": 10000, "emoji": "🧔", "duration": 60 },
+    { "name": "Corte + Barba", "price": 22000, "emoji": "✂️🧔", "duration": 60 },
+    { "name": "Afeitado clásico", "price": 12000, "emoji": "🪒", "duration": 60 },
+    { "name": "Tratamiento capilar", "price": 25000, "emoji": "💆", "duration": 60 }
   ],
   "currency": "COP",
   "currencySymbol": "$",

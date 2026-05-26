@@ -153,10 +153,24 @@ async function deleteAppointment(id) {
 }
 
 /**
+ * Gets the current date/time in Colombia timezone (UTC-5).
+ * Always uses Colombia time regardless of server location.
+ * @returns {Date} Date object adjusted to Colombia time
+ */
+function getColombiaTime() {
+  const now = new Date();
+  // Get UTC time, then subtract 5 hours for Colombia (UTC-5)
+  const colombiaOffset = -5 * 60; // minutes
+  const utcMinutes = now.getTime() + (now.getTimezoneOffset() * 60000);
+  return new Date(utcMinutes + (colombiaOffset * 60000));
+}
+
+/**
  * Gets available time slots for a given date.
- * Generates slots based on barbershop schedule and removes already booked ones.
+ * Generates 1-hour slots based on barbershop schedule and removes already booked ones.
+ * For today's date, only shows slots starting from the next full hour (Colombia time).
  * @param {string} date - Date string (DD/MM/YYYY)
- * @returns {Array<string>} Available time slots (e.g., ["9:00 AM", "9:30 AM", ...])
+ * @returns {Array<string>} Available time slots (e.g., ["9:00 AM", "10:00 AM", ...])
  */
 async function getAvailableSlots(date) {
   const barbershop = require('../config/barbershop.json');
@@ -177,9 +191,9 @@ async function getAvailableSlots(date) {
   const openMinutes = parseTimeToMinutes(openStr);
   const closeMinutes = parseTimeToMinutes(closeStr);
 
-  // Generate 30-minute slots
+  // Generate 1-hour slots (last slot must end before closing)
   const allSlots = [];
-  for (let m = openMinutes; m < closeMinutes; m += 30) {
+  for (let m = openMinutes; m <= closeMinutes - 60; m += 60) {
     allSlots.push(minutesToTimeStr(m));
   }
 
@@ -188,7 +202,25 @@ async function getAvailableSlots(date) {
   const bookedTimes = new Set(booked.map(a => a.time));
 
   // Filter out booked slots
-  return allSlots.filter(slot => !bookedTimes.has(slot));
+  let available = allSlots.filter(slot => !bookedTimes.has(slot));
+
+  // If the requested date is TODAY (Colombia time), filter out past hours
+  const colombiaNow = getColombiaTime();
+  const todayStr = `${String(colombiaNow.getDate()).padStart(2, '0')}/${String(colombiaNow.getMonth() + 1).padStart(2, '0')}/${colombiaNow.getFullYear()}`;
+
+  if (date === todayStr) {
+    // Current time in minutes since midnight (Colombia)
+    const currentMinutes = colombiaNow.getHours() * 60 + colombiaNow.getMinutes();
+    // Next full hour: if it's 8:03, next available is 9:00 (540 min)
+    const nextFullHour = (Math.floor(currentMinutes / 60) + 1) * 60;
+
+    available = available.filter(slot => {
+      const slotMinutes = parseTimeToMinutes(slot);
+      return slotMinutes >= nextFullHour;
+    });
+  }
+
+  return available;
 }
 
 /**

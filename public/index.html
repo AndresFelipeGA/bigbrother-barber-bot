@@ -496,6 +496,14 @@
     }
 
     // ============ STEP 2: DATES ============
+    // Always use Colombia time (UTC-5) regardless of device timezone
+    function getColombiaDate() {
+      const now = new Date();
+      // Convert to Colombia time using Intl API
+      const colombiaStr = now.toLocaleString('en-US', { timeZone: 'America/Bogota' });
+      return new Date(colombiaStr);
+    }
+
     function renderDates() {
       const container = document.getElementById('date-list');
       const days = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
@@ -508,12 +516,15 @@
         if (schedule === 'Cerrado') closedDays.push(dayMap[dayName]);
       }
 
+      // Use Colombia time as base
+      const colombiaToday = getColombiaDate();
+
       let html = '';
       let count = 0;
-      let offset = 1; // Start from tomorrow
+      let offset = 0; // Start from TODAY (server filters past hours)
 
       while (count < 8) {
-        const d = new Date();
+        const d = new Date(colombiaToday);
         d.setDate(d.getDate() + offset);
         const dayOfWeek = d.getDay();
 
@@ -523,9 +534,10 @@
         }
 
         const dateStr = `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
+        const isToday = offset === 0;
         html += `
           <button class="date-btn" onclick="selectDate('${dateStr}', this)">
-            <div class="day-name">${days[dayOfWeek]}</div>
+            <div class="day-name">${isToday ? 'HOY' : days[dayOfWeek]}</div>
             <div class="day-num">${d.getDate()}</div>
             <div class="month">${months[d.getMonth()]}</div>
           </button>
