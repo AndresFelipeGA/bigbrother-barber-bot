@@ -45,7 +45,7 @@ module.exports = async function handler(req, res) {
 };
 
 async function handleGet(req, res) {
-  const { date, phone, all, slots, config } = req.query;
+  const { date, phone, all, slots, config, barber } = req.query;
 
   // Return barbershop configuration
   if (config === 'true') {
@@ -54,7 +54,7 @@ async function handleGet(req, res) {
 
   // Return available time slots for a date
   if (slots === 'true' && date) {
-    const available = await getAvailableSlots(date);
+    const available = await getAvailableSlots(date, barber || null);
     return res.status(200).json(available);
   }
 
@@ -103,8 +103,8 @@ async function handlePost(req, res) {
     });
   }
 
-  // Check if slot is still available
-  const available = await getAvailableSlots(date);
+  // Check if slot is still available (per barber)
+  const available = await getAvailableSlots(date, barber || null);
   if (!available.includes(time)) {
     return res.status(409).json({ error: 'Time slot no longer available' });
   }

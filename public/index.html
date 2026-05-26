@@ -859,7 +859,7 @@
       container.innerHTML = '<div class="loading"><div class="spinner"></div><p style="margin-top:0.5rem">Cargando...</p></div>';
 
       try {
-        const res = await fetch(`${API_BASE}?slots=true&date=${encodeURIComponent(selectedDate)}`);
+        const res = await fetch(`${API_BASE}?slots=true&date=${encodeURIComponent(selectedDate)}&barber=${encodeURIComponent(selectedBarber.name)}`);
         const slots = await res.json();
 
         if (slots.length === 0) {

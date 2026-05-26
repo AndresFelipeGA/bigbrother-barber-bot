@@ -170,9 +170,10 @@ function getColombiaTime() {
  * Generates 1-hour slots based on barbershop schedule and removes already booked ones.
  * For today's date, only shows slots starting from the next full hour (Colombia time).
  * @param {string} date - Date string (DD/MM/YYYY)
+ * @param {string} [barber] - Optional barber name to filter slots per barber
  * @returns {Array<string>} Available time slots (e.g., ["9:00 AM", "10:00 AM", ...])
  */
-async function getAvailableSlots(date) {
+async function getAvailableSlots(date, barber) {
   const barbershop = require('../config/barbershop.json');
 
   // Parse date to get day of week
@@ -197,9 +198,12 @@ async function getAvailableSlots(date) {
     allSlots.push(minutesToTimeStr(m));
   }
 
-  // Get booked appointments for this date
+  // Get booked appointments for this date (filtered by barber if provided)
   const booked = await getAppointmentsByDate(date);
-  const bookedTimes = new Set(booked.map(a => a.time));
+  const filteredBooked = barber
+    ? booked.filter(a => a.barber === barber)
+    : booked;
+  const bookedTimes = new Set(filteredBooked.map(a => a.time));
 
   // Filter out booked slots
   let available = allSlots.filter(slot => !bookedTimes.has(slot));
