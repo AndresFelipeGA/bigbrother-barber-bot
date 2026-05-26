@@ -1,7 +1,7 @@
 {
   "name": "bigbrother-barber-bot",
-  "version": "2.0.0",
-  "description": "WhatsApp chatbot for Big Brother Barber Shop - Vercel + MongoDB Atlas",
+  "version": "3.0.0",
+  "description": "Big Brother Barber Shop - WhatsApp Bot + Web Reservations - Vercel + MongoDB Atlas",
   "private": true,
   "scripts": {
     "test": "node tests/chatbot.test.js",

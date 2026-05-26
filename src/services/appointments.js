@@ -44,7 +44,7 @@ async function getDatabase() {
 
 /**
  * Saves a new appointment to MongoDB.
- * @param {object} appointment - { customerPhone, customerName, service, servicePrice, date, time, status }
+ * @param {object} appointment - { customerPhone, customerName, service, servicePrice, date, time, status, source }
  * @returns {object} The saved appointment document
  */
 async function saveAppointment(appointment) {
@@ -60,6 +60,7 @@ async function saveAppointment(appointment) {
     date: appointment.date,
     time: appointment.time,
     status: appointment.status || 'confirmed',
+    source: appointment.source || 'whatsapp',
     createdAt: new Date().toISOString(),
   };
 
@@ -102,8 +103,131 @@ async function getAppointmentsByDate(date) {
   return appointments;
 }
 
+/**
+ * Gets ALL appointments (for admin panel).
+ * Returns most recent first, limited to 200.
+ * @returns {Array} List of all appointments
+ */
+async function getAllAppointments() {
+  const db = await getDatabase();
+  const collection = db.collection(COLLECTION_NAME);
+
+  const appointments = await collection
+    .find({})
+    .sort({ date: -1, time: -1 })
+    .limit(200)
+    .toArray();
+
+  return appointments;
+}
+
+/**
+ * Updates the status of an appointment.
+ * @param {string} id - Appointment ID
+ * @param {string} status - New status (confirmed, completed, cancelled, no-show)
+ * @returns {boolean} True if updated, false if not found
+ */
+async function updateAppointmentStatus(id, status) {
+  const db = await getDatabase();
+  const collection = db.collection(COLLECTION_NAME);
+
+  const result = await collection.updateOne(
+    { _id: id },
+    { $set: { status, updatedAt: new Date().toISOString() } }
+  );
+
+  return result.matchedCount > 0;
+}
+
+/**
+ * Deletes an appointment.
+ * @param {string} id - Appointment ID
+ * @returns {boolean} True if deleted, false if not found
+ */
+async function deleteAppointment(id) {
+  const db = await getDatabase();
+  const collection = db.collection(COLLECTION_NAME);
+
+  const result = await collection.deleteOne({ _id: id });
+  return result.deletedCount > 0;
+}
+
+/**
+ * Gets available time slots for a given date.
+ * Generates slots based on barbershop schedule and removes already booked ones.
+ * @param {string} date - Date string (DD/MM/YYYY)
+ * @returns {Array<string>} Available time slots (e.g., ["9:00 AM", "9:30 AM", ...])
+ */
+async function getAvailableSlots(date) {
+  const barbershop = require('../config/barbershop.json');
+
+  // Parse date to get day of week
+  const [day, month, year] = date.split('/').map(Number);
+  const dateObj = new Date(year, month - 1, day);
+  const days = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+  const dayName = days[dateObj.getDay()];
+
+  const scheduleStr = barbershop.schedule[dayName];
+  if (!scheduleStr || scheduleStr === 'Cerrado') {
+    return [];
+  }
+
+  // Parse schedule "9:00 AM - 8:00 PM"
+  const [openStr, closeStr] = scheduleStr.split(' - ');
+  const openMinutes = parseTimeToMinutes(openStr);
+  const closeMinutes = parseTimeToMinutes(closeStr);
+
+  // Generate 30-minute slots
+  const allSlots = [];
+  for (let m = openMinutes; m < closeMinutes; m += 30) {
+    allSlots.push(minutesToTimeStr(m));
+  }
+
+  // Get booked appointments for this date
+  const booked = await getAppointmentsByDate(date);
+  const bookedTimes = new Set(booked.map(a => a.time));
+
+  // Filter out booked slots
+  return allSlots.filter(slot => !bookedTimes.has(slot));
+}
+
+/**
+ * Parses a time string like "9:00 AM" or "8:00 PM" to minutes since midnight.
+ */
+function parseTimeToMinutes(timeStr) {
+  const match = timeStr.trim().match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+  if (!match) return 0;
+
+  let hours = parseInt(match[1]);
+  const minutes = parseInt(match[2]);
+  const period = match[3].toUpperCase();
+
+  if (period === 'PM' && hours !== 12) hours += 12;
+  if (period === 'AM' && hours === 12) hours = 0;
+
+  return hours * 60 + minutes;
+}
+
+/**
+ * Converts minutes since midnight to a time string like "9:00 AM".
+ */
+function minutesToTimeStr(totalMinutes) {
+  let hours = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
+  const period = hours >= 12 ? 'PM' : 'AM';
+
+  if (hours > 12) hours -= 12;
+  if (hours === 0) hours = 12;
+
+  return `${hours}:${minutes.toString().padStart(2, '0')} ${period}`;
+}
+
 module.exports = {
   saveAppointment,
   getAppointmentsByPhone,
   getAppointmentsByDate,
+  getAllAppointments,
+  updateAppointmentStatus,
+  deleteAppointment,
+  getAvailableSlots,
 };

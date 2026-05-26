@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Big Brother - Panel Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #0a0a0a;
+      --bg-card: #1a1a1a;
+      --bg-input: #252525;
+      --gold: #c8a84e;
+      --gold-light: #e0c068;
+      --gold-dark: #a08030;
+      --text-primary: #ffffff;
+      --text-secondary: #a0a0a0;
+      --text-muted: #666666;
+      --border: #333333;
+      --success: #22c55e;
+      --warning: #f59e0b;
+      --error: #ef4444;
+      --info: #3b82f6;
+      --radius: 12px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg-dark);
+      color: var(--text-primary);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Header */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 1.5rem;
+      background: #111;
+      border-bottom: 1px solid var(--border);
+    }
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .header .logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.5rem;
+      letter-spacing: 2px;
+      color: var(--gold);
+    }
+    .header .badge {
+      background: var(--gold-dark);
+      color: #000;
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      text-transform: uppercase;
+    }
+    .btn-logout {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      padding: 0.4rem 0.75rem;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .btn-logout:hover { color: var(--error); border-color: var(--error); }
+
+    /* Login screen */
+    .login-screen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 80vh;
+      padding: 2rem;
+    }
+    .login-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2rem;
+      width: 100%;
+      max-width: 360px;
+      text-align: center;
+    }
+    .login-box .emoji { font-size: 3rem; margin-bottom: 1rem; }
+    .login-box h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.8rem;
+      color: var(--gold);
+      letter-spacing: 2px;
+      margin-bottom: 0.25rem;
+    }
+    .login-box p {
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+      margin-bottom: 1.5rem;
+    }
+    .login-box input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      background: var(--bg-input);
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text-primary);
+      font-size: 1rem;
+      font-family: inherit;
+      outline: none;
+      text-align: center;
+      letter-spacing: 2px;
+    }
+    .login-box input:focus { border-color: var(--gold); }
+    .login-error {
+      color: var(--error);
+      font-size: 0.8rem;
+      margin-top: 0.5rem;
+      display: none;
+    }
+
+    /* Main content */
+    .main { display: none; }
+    .main.active { display: block; }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 1.5rem 1rem;
+    }
+
+    /* Stats bar */
+    .stats-bar {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+    .stat-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem;
+      text-align: center;
+    }
+    .stat-card .number {
+      font-size: 1.8rem;
+      font-weight: 700;
+    }
+    .stat-card .label {
+      font-size: 0.7rem;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-top: 0.15rem;
+    }
+    .stat-card.gold .number { color: var(--gold); }
+    .stat-card.green .number { color: var(--success); }
+    .stat-card.red .number { color: var(--error); }
+    .stat-card.blue .number { color: var(--info); }
+
+    /* Filters */
+    .filters {
+      display: flex;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .filter-btn {
+      padding: 0.5rem 1rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-secondary);
+      font-size: 0.8rem;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .filter-btn:hover { border-color: var(--gold-dark); color: var(--text-primary); }
+    .filter-btn.active { border-color: var(--gold); color: var(--gold); background: #1f1a0f; }
+    .filter-input {
+      padding: 0.5rem 0.75rem;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-size: 0.8rem;
+      font-family: inherit;
+      outline: none;
+      flex: 1;
+      min-width: 140px;
+    }
+    .filter-input:focus { border-color: var(--gold); }
+
+    /* Table */
+    .table-wrapper {
+      overflow-x: auto;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+    thead {
+      background: #151515;
+    }
+    th {
+      padding: 0.75rem 1rem;
+      text-align: left;
+      font-weight: 600;
+      color: var(--text-secondary);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+    }
+    td {
+      padding: 0.75rem 1rem;
+      border-top: 1px solid #1f1f1f;
+      white-space: nowrap;
+    }
+    tr:hover { background: #151515; }
+
+    /* Status badges */
+    .badge-status {
+      display: inline-block;
+      padding: 0.2rem 0.6rem;
+      border-radius: 6px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    .badge-confirmed { background: #0f2d1a; color: var(--success); }
+    .badge-completed { background: #1a2540; color: var(--info); }
+    .badge-cancelled { background: #2d1111; color: var(--error); }
+    .badge-no-show { background: #2d2211; color: var(--warning); }
+
+    /* Source badge */
+    .badge-source {
+      display: inline-block;
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.65rem;
+      font-weight: 600;
+    }
+    .badge-web { background: #1a2540; color: var(--info); }
+    .badge-whatsapp { background: #0f2d1a; color: var(--success); }
+
+    /* Action buttons */
+    .actions {
+      display: flex;
+      gap: 0.35rem;
+    }
+    .btn-action {
+      padding: 0.3rem 0.5rem;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: transparent;
+      cursor: pointer;
+      font-size: 0.75rem;
+      transition: all 0.2s;
+    }
+    .btn-action:hover { background: var(--bg-input); }
+    .btn-complete { color: var(--success); }
+    .btn-complete:hover { border-color: var(--success); }
+    .btn-cancel { color: var(--error); }
+    .btn-cancel:hover { border-color: var(--error); }
+    .btn-delete { color: var(--text-muted); }
+    .btn-delete:hover { border-color: var(--error); color: var(--error); }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: var(--text-muted);
+    }
+    .empty-state .emoji { font-size: 3rem; margin-bottom: 0.5rem; }
+
+    /* Loading */
+    .loading {
+      text-align: center;
+      padding: 2rem;
+      color: var(--text-secondary);
+    }
+    .spinner {
+      display: inline-block;
+      width: 24px;
+      height: 24px;
+      border: 3px solid var(--border);
+      border-top-color: var(--gold);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      .stats-bar { grid-template-columns: repeat(2, 1fr); }
+      .header { padding: 0.75rem 1rem; }
+      .header .logo { font-size: 1.2rem; }
+      th, td { padding: 0.5rem 0.6rem; font-size: 0.75rem; }
+    }
+
+    /* Refresh button */
+    .btn-refresh {
+      padding: 0.5rem 1rem;
+      background: var(--gold);
+      color: #000;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+    }
+    .btn-refresh:hover { background: var(--gold-light); }
+  </style>
+</head>
+<body>
+
+  <!-- LOGIN SCREEN -->
+  <div id="login-screen" class="login-screen">
+    <div class="login-box">
+      <div class="emoji">💈</div>
+      <h2>BIG BROTHER</h2>
+      <p>Panel de Administración</p>
+      <input type="password" id="admin-key" placeholder="Clave de acceso" onkeydown="if(event.key==='Enter')login()">
+      <div class="login-error" id="login-error">Clave incorrecta</div>
+      <button class="btn-refresh" style="width:100%;margin-top:1rem;padding:0.75rem" onclick="login()">Entrar</button>
+    </div>
+  </div>
+
+  <!-- MAIN PANEL -->
+  <div id="main-panel" class="main">
+    <div class="header">
+      <div class="header-left">
+        <span class="logo">💈 BIG BROTHER</span>
+        <span class="badge">Admin</span>
+      </div>
+      <button class="btn-logout" onclick="logout()">Cerrar sesión</button>
+    </div>
+
+    <div class="container">
+      <!-- Stats -->
+      <div class="stats-bar" id="stats-bar">
+        <div class="stat-card gold">
+          <div class="number" id="stat-total">-</div>
+          <div class="label">Total</div>
+        </div>
+        <div class="stat-card green">
+          <div class="number" id="stat-confirmed">-</div>
+          <div class="label">Confirmadas</div>
+        </div>
+        <div class="stat-card blue">
+          <div class="number" id="stat-completed">-</div>
+          <div class="label">Completadas</div>
+        </div>
+        <div class="stat-card red">
+          <div class="number" id="stat-cancelled">-</div>
+          <div class="label">Canceladas</div>
+        </div>
+      </div>
+
+      <!-- Filters -->
+      <div class="filters">
+        <button class="filter-btn active" onclick="setFilter('all', this)">Todas</button>
+        <button class="filter-btn" onclick="setFilter('confirmed', this)">Confirmadas</button>
+        <button class="filter-btn" onclick="setFilter('completed', this)">Completadas</button>
+        <button class="filter-btn" onclick="setFilter('cancelled', this)">Canceladas</button>
+        <input type="text" class="filter-input" id="search-input" placeholder="🔍 Buscar nombre o teléfono..." oninput="applyFilters()">
+        <button class="btn-refresh" onclick="loadAppointments()">🔄 Actualizar</button>
+      </div>
+
+      <!-- Table -->
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Código</th>
+              <th>Cliente</th>
+              <th>Teléfono</th>
+              <th>Servicio</th>
+              <th>Fecha</th>
+              <th>Hora</th>
+              <th>Precio</th>
+              <th>Origen</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="appointments-body">
+            <tr><td colspan="10" class="loading"><div class="spinner"></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = '/api/appointments';
+    let adminKey = '';
+    let allAppointments = [];
+    let currentFilter = 'all';
+
+    // ============ AUTH ============
+    function login() {
+      adminKey = document.getElementById('admin-key').value.trim();
+      if (!adminKey) return;
+
+      // Try loading appointments to validate key
+      fetch(`${API_BASE}?all=true&key=${encodeURIComponent(adminKey)}`)
+        .then(res => {
+          if (res.status === 401) {
+            document.getElementById('login-error').style.display = 'block';
+            return null;
+          }
+          return res.json();
+        })
+        .then(data => {
+          if (data) {
+            allAppointments = data;
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('main-panel').classList.add('active');
+            sessionStorage.setItem('adminKey', adminKey);
+            renderAppointments();
+            updateStats();
+          }
+        })
+        .catch(() => {
+          document.getElementById('login-error').style.display = 'block';
+        });
+    }
+
+    function logout() {
+      sessionStorage.removeItem('adminKey');
+      adminKey = '';
+      document.getElementById('login-screen').style.display = 'flex';
+      document.getElementById('main-panel').classList.remove('active');
+      document.getElementById('admin-key').value = '';
+    }
+
+    // Auto-login if key in session
+    (function autoLogin() {
+      const saved = sessionStorage.getItem('adminKey');
+      if (saved) {
+        document.getElementById('admin-key').value = saved;
+        login();
+      }
+    })();
+
+    // ============ LOAD DATA ============
+    async function loadAppointments() {
+      try {
+        const res = await fetch(`${API_BASE}?all=true&key=${encodeURIComponent(adminKey)}`);
+        if (res.status === 401) { logout(); return; }
+        allAppointments = await res.json();
+        renderAppointments();
+        updateStats();
+      } catch (err) {
+        console.error('Error loading appointments:', err);
+      }
+    }
+
+    // ============ RENDER ============
+    function renderAppointments() {
+      const filtered = getFilteredAppointments();
+      const tbody = document.getElementById('appointments-body');
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `
+          <tr><td colspan="10">
+            <div class="empty-state">
+              <div class="emoji">📋</div>
+              <p>No hay reservas${currentFilter !== 'all' ? ' con este filtro' : ''}</p>
+            </div>
+          </td></tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(apt => `
+        <tr>
+          <td style="font-family:monospace;font-size:0.75rem;color:var(--text-muted)">${apt._id.substring(0, 8).toUpperCase()}</td>
+          <td><strong>${escapeHtml(apt.customerName)}</strong></td>
+          <td>${escapeHtml(apt.customerPhone)}</td>
+          <td>${escapeHtml(apt.service)}</td>
+          <td>${apt.date}</td>
+          <td>${apt.time}</td>
+          <td style="color:var(--gold);font-weight:600">$${(apt.servicePrice || 0).toLocaleString('es-CO')}</td>
+          <td><span class="badge-source badge-${apt.source || 'web'}">${apt.source || 'web'}</span></td>
+          <td><span class="badge-status badge-${apt.status}">${statusLabel(apt.status)}</span></td>
+          <td>
+            <div class="actions">
+              ${apt.status === 'confirmed' ? `
+                <button class="btn-action btn-complete" title="Completar" onclick="updateStatus('${apt._id}', 'completed')">✓</button>
+                <button class="btn-action btn-cancel" title="Cancelar" onclick="updateStatus('${apt._id}', 'cancelled')">✕</button>
+              ` : ''}
+              <button class="btn-action btn-delete" title="Eliminar" onclick="deleteApt('${apt._id}')">🗑</button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function updateStats() {
+      const total = allAppointments.length;
+      const confirmed = allAppointments.filter(a => a.status === 'confirmed').length;
+      const completed = allAppointments.filter(a => a.status === 'completed').length;
+      const cancelled = allAppointments.filter(a => a.status === 'cancelled' || a.status === 'no-show').length;
+
+      document.getElementById('stat-total').textContent = total;
+      document.getElementById('stat-confirmed').textContent = confirmed;
+      document.getElementById('stat-completed').textContent = completed;
+      document.getElementById('stat-cancelled').textContent = cancelled;
+    }
+
+    function statusLabel(status) {
+      const labels = {
+        confirmed: 'Confirmada',
+        completed: 'Completada',
+        cancelled: 'Cancelada',
+        'no-show': 'No asistió',
+      };
+      return labels[status] || status;
+    }
+
+    // ============ FILTERS ============
+    function setFilter(filter, btn) {
+      currentFilter = filter;
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderAppointments();
+    }
+
+    function applyFilters() {
+      renderAppointments();
+    }
+
+    function getFilteredAppointments() {
+      let filtered = [...allAppointments];
+      const search = document.getElementById('search-input').value.toLowerCase().trim();
+
+      if (currentFilter !== 'all') {
+        filtered = filtered.filter(a => a.status === currentFilter);
+      }
+
+      if (search) {
+        filtered = filtered.filter(a =>
+          (a.customerName || '').toLowerCase().includes(search) ||
+          (a.customerPhone || '').includes(search) ||
+          (a._id || '').toLowerCase().includes(search)
+        );
+      }
+
+      return filtered;
+    }
+
+    // ============ ACTIONS ============
+    async function updateStatus(id, status) {
+      const labels = { completed: 'completar', cancelled: 'cancelar' };
+      if (!confirm(`¿Seguro que deseas ${labels[status]} esta reserva?`)) return;
+
+      try {
+        const res = await fetch(API_BASE, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id, status, key: adminKey }),
+        });
+
+        if (res.ok) {
+          await loadAppointments();
+        } else {
+          const err = await res.json();
+          alert('Error: ' + (err.error || 'Unknown'));
+        }
+      } catch (err) {
+        alert('Error de conexión');
+      }
+    }
+
+    async function deleteApt(id) {
+      if (!confirm('¿Seguro que deseas ELIMINAR esta reserva? Esta acción no se puede deshacer.')) return;
+
+      try {
+        const res = await fetch(`${API_BASE}?id=${id}&key=${encodeURIComponent(adminKey)}`, {
+          method: 'DELETE',
+        });
+
+        if (res.ok) {
+          await loadAppointments();
+        } else {
+          const err = await res.json();
+          alert('Error: ' + (err.error || 'Unknown'));
+        }
+      } catch (err) {
+        alert('Error de conexión');
+      }
+    }
+
+    // ============ HELPERS ============
+    function escapeHtml(str) {
+      if (!str) return '';
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    // Auto-refresh every 30 seconds
+    setInterval(() => {
+      if (adminKey) loadAppointments();
+    }, 30000);
+  </script>
+</body>
+</html>
