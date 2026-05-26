@@ -111,6 +111,16 @@
       border-radius: var(--radius);
       padding: 0.85rem;
       margin-bottom: 0.75rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+    }
+    .profile-left, .profile-right {
+      display: flex;
+      flex-direction: column;
+    }
+    .profile-right {
+      justify-content: stretch;
     }
     .profile-header {
       display: flex;
@@ -185,10 +195,11 @@
 
     /* Map */
     .map-container {
-      border-radius: var(--radius);
+      border-radius: 8px;
       overflow: hidden;
       border: 1px solid var(--border);
-      height: 120px;
+      height: 100%;
+      min-height: 140px;
       flex-shrink: 0;
     }
     .map-container iframe {
@@ -465,6 +476,12 @@
       .panel-right {
         padding: 1.5rem 1rem;
       }
+      .profile-card {
+        grid-template-columns: 1fr;
+      }
+      .map-container {
+        min-height: 180px;
+      }
     }
   </style>
 </head>
@@ -485,51 +502,54 @@
         <img src="/img/barberia1.jpg" alt="Big Brother Barber Shop">
       </div>
 
-      <!-- Profile Card -->
+      <!-- Profile Card (two columns: info | map) -->
       <div class="profile-card">
-        <div class="profile-header">
-          <div class="profile-avatar">💈</div>
-          <div>
-            <div class="profile-name">BIG BROTHER BARBER SHOP</div>
-            <div class="profile-slogan">Tu estilo, nuestra pasión</div>
-            <div class="profile-social">
-              <a href="https://instagram.com/big_brobarber" target="_blank">📸 @big_brobarber</a>
+        <div class="profile-left">
+          <div class="profile-header">
+            <div class="profile-avatar">💈</div>
+            <div>
+              <div class="profile-name">BIG BROTHER BARBER SHOP</div>
+              <div class="profile-slogan">Tu estilo, nuestra pasión</div>
+              <div class="profile-social">
+                <a href="https://instagram.com/big_brobarber" target="_blank">📸 @big_brobarber</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="info-rows">
+            <div class="info-row">
+              <span class="icon">📍</span>
+              <span>Cl. 68 #54-38, Barrios Unidos, Bogotá</span>
+            </div>
+            <div class="info-row">
+              <span class="icon">📞</span>
+              <a href="tel:+573124717131">312 471 7131</a>
+            </div>
+            <div class="info-row">
+              <span class="icon">💬</span>
+              <a href="https://wa.me/573124717131" target="_blank">WhatsApp</a>
+            </div>
+            <div class="info-row">
+              <span class="icon">🕐</span>
+              <div class="schedule-mini">
+                <span class="day">Lun - Vie</span><span class="hours">9:00 AM - 8:00 PM</span>
+                <span class="day">Sábado</span><span class="hours">9:00 AM - 6:00 PM</span>
+                <span class="day">Domingo</span><span class="hours closed">Cerrado</span>
+              </div>
             </div>
           </div>
         </div>
 
-        <div class="info-rows">
-          <div class="info-row">
-            <span class="icon">📍</span>
-            <span>Cl. 68 #54-38, Barrios Unidos, Bogotá</span>
-          </div>
-          <div class="info-row">
-            <span class="icon">📞</span>
-            <a href="tel:+573124717131">312 471 7131</a>
-          </div>
-          <div class="info-row">
-            <span class="icon">💬</span>
-            <a href="https://wa.me/573124717131" target="_blank">WhatsApp</a>
-          </div>
-          <div class="info-row">
-            <span class="icon">🕐</span>
-            <div class="schedule-mini">
-              <span class="day">Lun - Vie</span><span class="hours">9:00 AM - 8:00 PM</span>
-              <span class="day">Sábado</span><span class="hours">9:00 AM - 6:00 PM</span>
-              <span class="day">Domingo</span><span class="hours closed">Cerrado</span>
-            </div>
+        <div class="profile-right">
+          <div class="map-container">
+            <iframe
+              src="https://maps.google.com/maps?q=Cl.+68+%2354-38,+Barrios+Unidos,+Bogot%C3%A1,+Colombia&t=&z=17&ie=UTF8&iwloc=&output=embed"
+              allowfullscreen=""
+              loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade">
+            </iframe>
           </div>
         </div>
-      </div>
-
-      <!-- Map -->
-      <div class="map-container">
-        <iframe 
-          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d993.2!2d-74.0817!3d4.6097!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNMKwMzYnMzQuOSJOIDc0wrAwNCc1NC4xIlc!5e0!3m2!1ses!2sco!4v1"
-          allowfullscreen="" 
-          loading="lazy" 
-          referrerpolicy="no-referrer-when-downgrade">
-        </iframe>
       </div>
 
       <div class="footer">
