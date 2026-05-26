@@ -3,11 +3,12 @@
   "emoji": "💈",
   "slogan": "Tu estilo, nuestra pasión",
   "location": {
-    "address": "Bogotá, Colombia",
+    "address": "Cl. 68 #54-38, Barrios Unidos, Bogotá, Cundinamarca, Colombia",
     "googleMapsUrl": "https://maps.app.goo.gl/GvSGEfbtpDNz3mmE7",
     "latitude": 4.6097,
     "longitude": -74.0817
   },
+  "phone": "3124717131",
   "schedule": {
     "Lunes": "9:00 AM - 8:00 PM",
     "Martes": "9:00 AM - 8:00 PM",
@@ -30,7 +31,7 @@
     { "name": "Disponible", "id": "barber1" }
   ],
   "socialMedia": {
-    "instagram": "",
+    "instagram": "https://instagram.com/big_brobarber",
     "facebook": "",
     "tiktok": ""
   }
