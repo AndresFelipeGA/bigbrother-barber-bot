@@ -5,11 +5,15 @@
   "private": true,
   "scripts": {
     "test": "node tests/chatbot.test.js",
+    "bot": "node bot.js",
     "dev": "vercel dev",
     "deploy": "vercel --prod"
   },
   "dependencies": {
+    "@whiskeysockets/baileys": "^7.0.0-rc13",
     "mongodb": "^6.8.0",
+    "pino": "^10.3.1",
+    "qrcode-terminal": "^0.12.0",
     "uuid": "^11.1.0"
   },
   "engines": {

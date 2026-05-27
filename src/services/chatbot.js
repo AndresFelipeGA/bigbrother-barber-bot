@@ -1,6 +1,7 @@
 'use strict';
 
-const { sendTextMessage, sendLocationMessage, sendListMessage, sendButtonMessage } = require('./whatsapp');
+// Use Baileys transport (swap to './whatsapp' for Meta Cloud API)
+const { sendTextMessage, sendLocationMessage, sendListMessage, sendButtonMessage } = require('./whatsapp-baileys');
 const { saveAppointment } = require('./appointments');
 const barbershop = require('../config/barbershop.json');
 

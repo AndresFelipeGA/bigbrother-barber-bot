@@ -22,3 +22,6 @@ Thumbs.db
 dist/
 build/
 .vercel
+
+# Baileys auth session (contains WhatsApp credentials - NEVER commit!)
+auth_session/
